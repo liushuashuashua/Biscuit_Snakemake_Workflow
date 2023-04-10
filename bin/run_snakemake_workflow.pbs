@@ -1,3 +1,4 @@
+#!/bin/bash
 #PBS -l walltime=400:00:00
 #PBS -l mem=8gb
 #PBS -m ae
