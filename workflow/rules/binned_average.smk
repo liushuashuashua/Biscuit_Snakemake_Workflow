@@ -30,7 +30,7 @@ rule binned_averages:
     threads: 1
     resources:
         mem_gb = config["hpcParameters"]["smallMemoryGb"],
-        walltime = config["walltime"]["medium"]
+        runtime = config["runtime"]["medium"]
     benchmark:
         f'{{output_directory}}/benchmarks/binned_averages/{{sample}}.log',
     envmodules:
