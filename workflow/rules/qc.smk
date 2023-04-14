@@ -43,7 +43,7 @@ rule biscuit_qc:
     threads: 8
     resources:
         mem_gb = config['hpcParameters']['intermediateMemoryGb'],
-        runtime = config['runtime']['medium'],
+        time = config['runtime']['medium'],
     conda:
         '../envs/biscuit.yaml'
     envmodules:
@@ -81,7 +81,7 @@ rule preseq:
     threads: 1,
     resources:
         mem_gb = config['hpcParameters']['intermediateMemoryGb'],
-        runtime = config['runtime']['medium'],
+        time = config['runtime']['medium'],
     conda:
         '../envs/preseq.yaml'
     envmodules:
@@ -143,7 +143,7 @@ rule multiQC:
     threads: 1
     resources:
         mem_gb=config['hpcParameters']['smallMemoryGb'],
-        runtime = config['runtime']['medium']
+        time = config['runtime']['medium']
     conda:
         '../envs/python_packages.yaml'
     envmodules:
@@ -166,7 +166,7 @@ rule percent_covered:
     threads: 1
     resources:
         mem_gb=config['hpcParameters']['smallMemoryGb'],
-        runtime = config['runtime']['short'],
+        time = config['runtime']['short'],
     conda:
         '../envs/python_packages.yaml'
     script:
@@ -190,7 +190,7 @@ if config['control_vectors']:
         threads: 1
         resources:
             mem_gb=config['hpcParameters']['smallMemoryGb'],
-            runtime = config['runtime']['medium'],
+            time = config['runtime']['medium'],
         conda:
             '../envs/biscuit.yaml'
         envmodules:
@@ -221,7 +221,7 @@ if config['control_vectors']:
         threads: 1
         resources:
             mem_gb=config['hpcParameters']['smallMemoryGb'],
-            runtime = config['runtime']['short'],
+            time = config['runtime']['short'],
         conda:
             '../envs/r.yaml',
         envmodules:

@@ -22,7 +22,7 @@ if config['build_ref_with_methylation_controls']:
         threads: 2
         resources:
             mem_gb=config['hpcParameters']['smallMemoryGb'],
-            runtime = config['runtime']['medium'],
+            time = config['runtime']['medium'],
         conda:
             '../envs/biscuit.yaml'
         envmodules:
@@ -118,7 +118,7 @@ rule biscuit_blaster:
     threads: config['hpcParameters']['biscuitBlasterThreads'] + config['hpcParameters']['samtoolsIndexThreads']
     resources:
         mem_gb = config['hpcParameters']['maxMemoryGb'],
-        runtime = config['runtime']['long'],
+        time = config['runtime']['long'],
     conda:
         '../envs/biscuit.yaml'
     envmodules:
@@ -207,7 +207,7 @@ rule biscuit_pileup:
     threads: config['hpcParameters']['pileupThreads']
     resources:
         mem_gb = config['hpcParameters']['intermediateMemoryGb'],
-        runtime = config['runtime']['medium'],
+        time = config['runtime']['medium'],
     wildcard_constraints:
         sample = '.*[^(_mergecg)]',
     conda:
@@ -250,7 +250,7 @@ rule biscuit_mergecg:
     threads: 8
     resources:
         mem_gb = config['hpcParameters']['intermediateMemoryGb'],
-        runtime = config['runtime']['medium'],
+        time = config['runtime']['medium'],
     wildcard_constraints:
         sample = '.*[^(_mergecg)]'
     conda:
@@ -286,7 +286,7 @@ rule biscuit_snps:
     threads: 1
     resources:
         mem_gb = config['hpcParameters']['intermediateMemoryGb'],
-        runtime = config['runtime']['medium'],
+        time = config['runtime']['medium'],
     conda:
         '../envs/biscuit.yaml'
     envmodules:
@@ -318,7 +318,7 @@ rule biscuit_epiread:
     threads: config['hpcParameters']['pileupThreads']
     resources:
         mem_gb = config['hpcParameters']['intermediateMemoryGb'],
-        runtime = config['runtime']['medium'],
+        time = config['runtime']['medium'],
     conda:
         '../envs/biscuit.yaml'
     envmodules:

@@ -17,7 +17,7 @@ checkpoint rename_fastq_files:
     threads: 1,
     resources:
         mem_gb = config['hpcParameters']['smallMemoryGb'],
-        runtime = config['runtime']['short'],
+        time = config['runtime']['short'],
     conda:
         '../envs/r.yaml'
     envmodules:
@@ -57,7 +57,7 @@ rule raw_fastqc:
     threads: config['hpcParameters']['trimThreads'],
     resources:
         mem_gb = config['hpcParameters']['smallMemoryGb'],
-        runtime = config['runtime']['medium'],
+        time = config['runtime']['medium'],
     shell:
         """
         mkdir -p {params.dir}
@@ -86,7 +86,7 @@ rule trim_reads:
     threads: config['hpcParameters']['trimThreads']
     resources:
         mem_gb = config['hpcParameters']['smallMemoryGb'],
-        runtime = config['runtime']['medium'],
+        time = config['runtime']['medium'],
     shell:
         """
         trim_galore \
@@ -124,7 +124,7 @@ rule fastq_screen:
     resources:
         nodes = 1,
         mem_gb = config['hpcParameters']['intermediateMemoryGb'],
-        runtime = config['runtime']['medium'],
+        time = config['runtime']['medium'],
     conda:
         '../envs/babraham.yaml'
     envmodules: 
