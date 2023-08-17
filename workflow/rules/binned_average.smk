@@ -33,6 +33,8 @@ rule binned_averages:
         time = config["runtime"]["medium"]
     benchmark:
         f'{{output_directory}}/benchmarks/binned_averages/{{sample}}.log',
+    conda:
+        '../envs/biscuit.yaml'
     envmodules:
         config["envmodules"]["bedtools"],
     shell:
