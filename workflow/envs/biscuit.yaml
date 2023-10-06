@@ -7,6 +7,6 @@ dependencies:
     - biscuit=1.2.0.20230130
     - htslib=1.17
     - samtools=1.17
-    - samblaster=0.1.26
+    - dupsifter=1.2.0.20230926
     - parallel=20230322
     - bedtools=2.30.0

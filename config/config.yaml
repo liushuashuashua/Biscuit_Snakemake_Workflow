@@ -35,10 +35,8 @@ trim_galore:
     args_list: '--clip_R2 15'
 
 # BISCUIT alignment options
-#     biscuit_blaster_version: version of biscuitBlaster to run (specify either v1 or v2)
 #     lib_type: biscuit align -b option (for directional vs non-directional alignment)
 biscuit:
-    biscuit_blaster_version: v1
     lib_type: 0
 
 # Input data is from NOMe-seq

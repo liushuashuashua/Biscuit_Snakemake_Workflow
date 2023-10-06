@@ -80,11 +80,7 @@ rule biscuit_blaster:
     output:
         bam = f'{output_directory}/analysis/align/{{sample}}.sorted.markdup.bam',
         bai = f'{output_directory}/analysis/align/{{sample}}.sorted.markdup.bam.bai',
-        disc = f'{output_directory}/analysis/align/{{sample}}.disc.sorted.bam' if config['biscuit']['biscuit_blaster_version'] == 'v2' else [f'{output_directory}/analysis/align/{{sample}}.no.disc'],
-        disc_bai = f'{output_directory}/analysis/align/{{sample}}.disc.sorted.bam.bai' if config['biscuit']['biscuit_blaster_version'] == 'v2' else [f'{output_directory}/analysis/align/{{sample}}.no.disc.bai'],
-        split = f'{output_directory}/analysis/align/{{sample}}.split.sorted.bam' if config['biscuit']['biscuit_blaster_version'] == 'v2' else [f'{output_directory}/analysis/align/{{sample}}.no.split'],
-        split_bai = f'{output_directory}/analysis/align/{{sample}}.split.sorted.bam.bai' if config['biscuit']['biscuit_blaster_version'] == 'v2' else [f'{output_directory}/analysis/align/{{sample}}.no.split.bai'],
-        unmapped = f'{output_directory}/analysis/align/{{sample}}.unmapped.fastq.gz' if config['biscuit']['biscuit_blaster_version'] == 'v2' else [f'{output_directory}/analysis/align/{{sample}}.no.unmapped'],
+        dup = f'{output_directory}/analysis/align/{{sample}}.dupsifter.stat',
         flagstat = f'{output_directory}/analysis/align/{{sample}}.sorted.markdup.bam.flagstat',
     params:
         # don't include the .fa/.fasta suffix for the reference biscuit idx.
@@ -94,25 +90,14 @@ rule biscuit_blaster:
         PU = config['sam_header']['PU'],
         SM = '{sample}',
         lib_type = config['biscuit']['lib_type'],
-        disc = f'{output_directory}/analysis/align/{{sample}}.disc.sam',
-        split = f'{output_directory}/analysis/align/{{sample}}.split.sam',
-        unmapped = f'{output_directory}/analysis/align/{{sample}}.unmapped.fastq',
-        biscuit_version = config['biscuit']['biscuit_blaster_version'],
         bb_threads = config['hpcParameters']['biscuitBlasterThreads'],
         st_threads = config['hpcParameters']['samtoolsIndexThreads'],
     log:
         biscuit = f'{output_directory}/logs/biscuit/biscuit_blaster.{{sample}}.log',
-        biscuit_blaster_version = f'{output_directory}/logs/biscuit/blaster_version.{{sample}}.log',
-        samblaster = f'{output_directory}/logs/biscuit/samblaster.{{sample}}.log',
-        samtools_view = f'{output_directory}/logs/biscuit/samtools_view.{{sample}}.log',
+        dupsifter = f'{output_directory}/logs/biscuit/dupsifter.{{sample}}.log',
         samtools_sort = f'{output_directory}/logs/biscuit/samtools_sort.{{sample}}.log',
         samtools_index = f'{output_directory}/logs/biscuit/samtools_index.{{sample}}.log',
         samtools_flagstat = f'{output_directory}/logs/biscuit/samtools_flagstat.{{sample}}.log',
-        sort_disc =  f'{output_directory}/logs/biscuit/sort_disc.{{sample}}.log',
-        index_disc = f'{output_directory}/logs/biscuit/index_disc.{{sample}}.log',    
-        sort_split = f'{output_directory}/logs/biscuit/sort_split.{{sample}}.log',
-        index_split = f'{output_directory}/logs/biscuit/index_split.{{sample}}.log',
-        bgzip_unmapped = f'{output_directory}/logs/biscuit/bgzip_unmapped.{{sample}}.log',       
     benchmark:
         f'{output_directory}/benchmarks/biscuit_blaster/{{sample}}.txt'
     threads: config['hpcParameters']['biscuitBlasterThreads'] + config['hpcParameters']['samtoolsIndexThreads']
@@ -124,61 +109,24 @@ rule biscuit_blaster:
     envmodules:
         config['envmodules']['biscuit'],
         config['envmodules']['samtools'],
-        config['envmodules']['samblaster'],
         config['envmodules']['htslib'],
     shell:
         """
-        if [ {params.biscuit_version} == "v2" ]; then
-            echo "biscuit blaster v2" 2> {log.biscuit_blaster_version}
+        # biscuitBlaster pipeline
+        biscuit align \
+            -@ {params.bb_threads} \
+            -b {params.lib_type} \
+            -R '@RG\tLB:{params.LB}\tID:{params.ID}\tPL:{params.PL}\tPU:{params.PU}\tSM:{params.SM}' \
+            {input.reference} \
+            <(zcat {input.R1}) \
+            <(zcat {input.R2}) 2> {log.biscuit} | \
+        dupsifter --stats-output {output.dup} {input.reference} 2> {log.dupsifter} | \
+        samtools sort -@ {params.st_threads} -m 5G -o {output.bam} -O BAM - 2> {log.samtools_sort}
 
-            # biscuitBlaster pipeline
-            biscuit align -@ {params.bb_threads} -b {params.lib_type} \
-                -R '@RG\tLB:{params.LB}\tID:{params.ID}\tPL:{params.PL}\tPU:{params.PU}\tSM:{params.SM}' \
-                {input.reference} <(zcat {input.R1}) <(zcat {input.R2}) 2> {log.biscuit} | \
-            samblaster --addMateTags -d {params.disc} -s {params.split} -u {params.unmapped} 2> {log.samblaster} | \
-            samtools sort -@ {params.st_threads} -m 5G -o {output.bam} -O BAM - 2> {log.samtools_sort}
-            samtools index -@ {params.st_threads} {output.bam} 2> {log.samtools_index}
+        samtools index -@ {params.st_threads} {output.bam} 2> {log.samtools_index}
 
-            # Get some initial stats
-            samtools flagstat {output.bam} 1> {output.flagstat} 2> {log.samtools_flagstat}
-
-            # Sort, compress, and index discordant read file
-            samtools sort -@ {params.st_threads} -o {output.disc} -O BAM {params.disc} 2> {log.sort_disc}
-            samtools index -@ {params.st_threads} {output.disc} 2> {log.index_disc}
-
-            # Sort, compress, and index split read file
-            samtools sort -@ {params.st_threads} -o {output.split} -O BAM {params.split} 2> {log.sort_split}
-            samtools index -@ {params.st_threads} {output.split} 2> {log.index_split}
-
-            # Compress unmapped/clipped FASTQ
-            bgzip -@ {params.st_threads} {params.unmapped} 2> {log.bgzip_unmapped}
-
-            # Clean up
-            rm {params.disc}
-            rm {params.split}
-        elif [ {params.biscuit_version} == "v1" ]; then
-            echo "biscuit blaster v1" 2> {log.biscuit_blaster_version}
-
-            # biscuitBlaster pipeline
-            biscuit align -@ {params.bb_threads} -b {params.lib_type} \
-                -R '@RG\tLB:{params.LB}\tID:{params.ID}\tPL:{params.PL}\tPU:{params.PU}\tSM:{params.SM}' \
-                {input.reference} <(zcat {input.R1}) <(zcat {input.R2}) 2> {log.biscuit} | \
-            samblaster --addMateTags 2> {log.samblaster} | \
-            samtools sort -@ {params.st_threads} -m 5G -o {output.bam} -O BAM - 2> {log.samtools_sort}
-            samtools index -@ {params.st_threads} {output.bam} 2> {log.samtools_index}
-
-            # Get some initial stats
-            samtools flagstat {output.bam} 1> {output.flagstat} 2> {log.samtools_flagstat}
-
-            # Add files to ensure smooth output transition
-            touch {output.disc}
-            touch {output.disc_bai}
-            touch {output.split}
-            touch {output.split_bai}
-            touch {output.unmapped}
-        else
-            echo "biscuit: biscuit_blaster_version must be v1 or v2 in config/config.yaml" 2> {log.biscuit_blaster_version}
-        fi
+        # Get some initial stats
+        samtools flagstat {output.bam} 1> {output.flagstat} 2> {log.samtools_flagstat}
         """
 
 rule biscuit_pileup:
