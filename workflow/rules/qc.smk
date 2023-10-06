@@ -7,6 +7,28 @@
 #
 ###-----------------------------------------------------------------------------------------------------------------###
 
+rule samtools_flagstat:
+    input:
+        bam = f'{output_directory}/analysis/align/{{sample}}.sorted.markdup.bam',
+    output:
+        flagstat = f'{output_directory}/analysis/align/{{sample}}.sorted.markdup.bam.flagstat',
+    log:
+        samtools_flagstat = f'{output_directory}/logs/samtools_flagstat/samtools_flagstat.{{sample}}.log',
+    benchmark:
+        f'{output_directory}/benchmarks/samtools_flagstat/{{sample}}.txt'
+    resources:
+        mem_gb = config['hpcParameters']['intermediateMemoryGb'],
+        time = config['runtime']['medium'],
+    conda:
+        '../envs/biscuit.yaml'
+    envmodules:
+        config['envmodules']['samtools'],
+    shell:
+        """
+        # Get some initial stats
+        samtools flagstat {input.bam} 1> {output.flagstat} 2> {log.samtools_flagstat}
+        """
+
 rule biscuit_qc:
     input:
         ref = get_biscuit_reference,

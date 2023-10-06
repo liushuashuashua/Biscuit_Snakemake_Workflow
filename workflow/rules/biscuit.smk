@@ -81,7 +81,6 @@ rule biscuit_blaster:
         bam = f'{output_directory}/analysis/align/{{sample}}.sorted.markdup.bam',
         bai = f'{output_directory}/analysis/align/{{sample}}.sorted.markdup.bam.bai',
         dup = f'{output_directory}/analysis/align/{{sample}}.dupsifter.stat',
-        flagstat = f'{output_directory}/analysis/align/{{sample}}.sorted.markdup.bam.flagstat',
     params:
         # don't include the .fa/.fasta suffix for the reference biscuit idx.
         LB = config['sam_header']['LB'],
@@ -97,7 +96,6 @@ rule biscuit_blaster:
         dupsifter = f'{output_directory}/logs/biscuit/dupsifter.{{sample}}.log',
         samtools_sort = f'{output_directory}/logs/biscuit/samtools_sort.{{sample}}.log',
         samtools_index = f'{output_directory}/logs/biscuit/samtools_index.{{sample}}.log',
-        samtools_flagstat = f'{output_directory}/logs/biscuit/samtools_flagstat.{{sample}}.log',
     benchmark:
         f'{output_directory}/benchmarks/biscuit_blaster/{{sample}}.txt'
     threads: config['hpcParameters']['biscuitBlasterThreads'] + config['hpcParameters']['samtoolsIndexThreads']
@@ -124,9 +122,6 @@ rule biscuit_blaster:
         samtools sort -@ {params.st_threads} -m 5G -o {output.bam} -O BAM - 2> {log.samtools_sort}
 
         samtools index -@ {params.st_threads} {output.bam} 2> {log.samtools_index}
-
-        # Get some initial stats
-        samtools flagstat {output.bam} 1> {output.flagstat} 2> {log.samtools_flagstat}
         """
 
 rule biscuit_pileup:
