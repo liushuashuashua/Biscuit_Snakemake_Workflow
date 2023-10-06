@@ -114,29 +114,29 @@ covg_uniformity:
 # If all dependency executables are in PATH and the module is specified with NULL, the workflow will still run with
 # warnings that modules could not be loaded.
 envmodules: 
-    samtools: bbc/samtools/samtools-1.12
-    R: bbc/R/R-4.1.0
-    snakemake: bbc/snakemake/snakemake-6.1.0
-    trim_galore: bbc/trim_galore/trim_galore-0.6.0
-    biscuit: bbc/biscuit/biscuit_1_0_1
-    samblaster: bbc/samblaster/samblaster-0.1.26
-    preseq: bbc/preseq/preseq-3.1.2
-    htslib: bbc/htslib/htslib-1.12
-    bedtools: bbc/bedtools/bedtools-2.29.2
-    fastqc: bbc/fastqc/fastqc-0.11.9
-    multiqc: bbc/multiqc/multiqc-1.11
+    samtools: bbc2/samtools/samtools-1.17
+    R: bbc2/R/R-4.3.0
+    snakemake: bbc2/snakemake/snakemake-7.25.0
+    trim_galore: bbc2/trim_galore/trim_galore-0.6.10
+    biscuit: bbc2/biscuit/biscuit_1_2_0
+    dupsifter: bbc2/dupsifter/dupsifter-1.2.0
+    preseq: bbc2/preseq/preseq-3.2.0
+    htslib: bbc2/htslib/htslib-1.17
+    bedtools: bbc2/bedtools/bedtools-2.30.0
+    fastqc: bbc2/fastqc/fastqc-0.12.1
+    multiqc: bbc2/multiqc/multiqc-1.14
     parallel: bbc/parallel/parallel-20191122
-    pigz: bbc/pigz/pigz-2.4
-    fastq_screen: bbc/fastq_screen/fastq_screen-0.14.0
-    bismark: bbc/bismark/bismark-0.23.0
-    python3: bbc/python3/python-3.8.1
+    pigz: bbc2/pigz/pigz-2.7
+    fastq_screen: bbc2/fastq_screen/fastq_screen-0.14.0
+    bismark: bbc2/bismark/bismark-0.24.0
+    python3: bbc2/python3/python-3.11.3
     # if you e.g. don't have a module system then put the envmodules as follows:
     #~ samtools: "NULL"
     #~ R: "NULL"
     #~ snakemake: "NULL"
     #~ trim_galore: "NULL"
     #~ biscuit: "NULL"
-    #~ samblaster: "NULL"
+    #~ dupsifter: "NULL"
     #~ preseq: "NULL"
     #~ htslib: "NULL"
     #~ bedtools: "NULL"
