@@ -72,7 +72,7 @@ def get_rename_fastq_output_R2(wildcards):
         files.sort()
         return files
 
-rule biscuit_blaster:
+rule biscuit_sifter:
     input:
         reference = get_biscuit_reference,
         R1 = get_rename_fastq_output_R1,
@@ -92,12 +92,12 @@ rule biscuit_blaster:
         bb_threads = config['hpcParameters']['biscuitBlasterThreads'],
         st_threads = config['hpcParameters']['samtoolsIndexThreads'],
     log:
-        biscuit = f'{output_directory}/logs/biscuit/biscuit_blaster.{{sample}}.log',
+        biscuit = f'{output_directory}/logs/biscuit/biscuit_sifter.{{sample}}.log',
         dupsifter = f'{output_directory}/logs/biscuit/dupsifter.{{sample}}.log',
         samtools_sort = f'{output_directory}/logs/biscuit/samtools_sort.{{sample}}.log',
         samtools_index = f'{output_directory}/logs/biscuit/samtools_index.{{sample}}.log',
     benchmark:
-        f'{output_directory}/benchmarks/biscuit_blaster/{{sample}}.txt'
+        f'{output_directory}/benchmarks/biscuit_sifter/{{sample}}.txt'
     threads: config['hpcParameters']['biscuitBlasterThreads'] + config['hpcParameters']['samtoolsIndexThreads']
     resources:
         mem_gb = config['hpcParameters']['maxMemoryGb'],
