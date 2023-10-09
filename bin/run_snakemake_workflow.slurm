@@ -36,4 +36,4 @@ snakemake \
         --ntasks {threads} \
         --mem={resources.mem_gb}G \
         -t {resources.time} \
-        -o logs/{rule}/{rule}-{wildcards}-%j.log"
+        -o logs/{rule}/{rule}-%j.log"
