@@ -36,7 +36,7 @@ rule get_regions_for_centered_bin_averages_from_bed:
 rule region_centered_bin_averages:
     input:
         merged_sample_bed = f'{output_directory}/analysis/pileup/{{sample}}_mergecg.bed.gz',
-        region_bins = f'{output_directory}/analysis/region_centered_bin_averages/regions/regionCenteredBins.bed',
+        region_bins = rules.get_regions_for_centered_bin_averages_from_bed.output,
     output:
         bed = f'{output_directory}/analysis/region_centered_bin_averages/{{sample}}.bed',
     log:
