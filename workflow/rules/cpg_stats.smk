@@ -21,7 +21,7 @@ rule cpg_stats_genomecov:
         f'{output_directory}/benchmarks/cpg_stats/{{sample}}.genomecov.cpg.log',
     threads: 8
     resources:
-        mem_gb = config['hpcParameters']['intermediate_memory_gb'],
+        mem_gb = config['hpc_parameters']['intermediate_memory_gb'],
         time = config['runtime']['medium'],
     conda:
         '../envs/biscuit.yaml'
@@ -66,7 +66,7 @@ rule cpg_stats_feature_table:
         f'{output_directory}/benchmarks/cpg_stats/{{sample}}.feature_table.log',
     threads: 8
     resources:
-        mem_gb = config['hpcParameters']['intermediate_memory_gb'],
+        mem_gb = config['hpc_parameters']['intermediate_memory_gb'],
         time = config['runtime']['medium'],
     conda:
         '../envs/biscuit.yaml'
@@ -128,7 +128,7 @@ rule cpg_stats_cgi_table:
         f'{output_directory}/benchmarks/cpg_stats/{{sample}}.cgi_table.log',
     threads: 8
     resources:
-        mem_gb = config['hpcParameters']['intermediate_memory_gb'],
+        mem_gb = config['hpc_parameters']['intermediate_memory_gb'],
         time = config['runtime']['medium'],
     conda:
         '../envs/biscuit.yaml'
@@ -170,7 +170,7 @@ rule cpg_stats_feature_plot:
         f'{output_directory}/benchmarks/cpg_stats/plot_cpg_stats_feature.log',
     threads: 1
     resources:
-        mem_gb = config['hpcParameters']['intermediate_memory_gb'],
+        mem_gb = config['hpc_parameters']['intermediate_memory_gb'],
         time = config['runtime']['medium'],
     conda:
         '../envs/python_packages.yaml'
@@ -197,7 +197,7 @@ rule cpg_stats_cgi_plot:
         f'{output_directory}/benchmarks/cpg_stats/plot_cpg_stats_cgi.log',
     threads: 1
     resources:
-        mem_gb = config['hpcParameters']['intermediate_memory_gb'],
+        mem_gb = config['hpc_parameters']['intermediate_memory_gb'],
         time = config['runtime']['medium'],
     conda:
         '../envs/python_packages.yaml'

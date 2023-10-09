@@ -29,7 +29,7 @@ rule binned_averages:
         f'{{output_directory}}/logs/binned_averages/{{sample}}.log',
     threads: 1
     resources:
-        mem_gb = config["hpcParameters"]["small_memory_gb"],
+        mem_gb = config["hpc_parameters"]["small_memory_gb"],
         time = config["runtime"]["medium"]
     benchmark:
         f'{{output_directory}}/benchmarks/binned_averages/{{sample}}.log',

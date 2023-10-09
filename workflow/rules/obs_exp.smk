@@ -20,7 +20,7 @@ rule obs_exp_coverage_genomecov:
         f'{output_directory}/benchmarks/obs_exp/{{sample}}.genomecov.txt',
     threads: 1
     resources:
-        mem_gb = config['hpcParameters']['intermediate_memory_gb'],
+        mem_gb = config['hpc_parameters']['intermediate_memory_gb'],
         time = config['runtime']['medium'],
     conda:
         '../envs/biscuit.yaml'
@@ -51,7 +51,7 @@ rule obs_exp_coverage_genomecov_cpg:
         f'{output_directory}/benchmarks/obs_exp/{{sample}}.cpg_genomecov.txt',
     threads: 1
     resources:
-        mem_gb = config['hpcParameters']['intermediate_memory_gb'],
+        mem_gb = config['hpc_parameters']['intermediate_memory_gb'],
         time = config['runtime']['medium'],
     conda:
         '../envs/biscuit.yaml'
@@ -78,7 +78,7 @@ rule obs_exp_coverage_genomecov_cgi:
         f'{output_directory}/benchmarks/obs_exp/{{sample}}.cgi_genomecov.txt',
     threads: 1
     resources:
-        mem_gb = config['hpcParameters']['intermediate_memory_gb'],
+        mem_gb = config['hpc_parameters']['intermediate_memory_gb'],
         time = config['runtime']['medium'],
     conda:
         '../envs/biscuit.yaml'
@@ -105,7 +105,7 @@ rule obs_exp_coverage_genomecov_intergenic:
         f'{output_directory}/benchmarks/obs_exp/{{sample}}.intergenic_genomecov.txt',
     threads: 1
     resources:
-        mem_gb = config['hpcParameters']['intermediate_memory_gb'],
+        mem_gb = config['hpc_parameters']['intermediate_memory_gb'],
         time = config['runtime']['medium'],
     conda:
         '../envs/biscuit.yaml'
@@ -132,7 +132,7 @@ rule obs_exp_coverage_genomecov_exon:
         f'{output_directory}/benchmarks/obs_exp/{{sample}}.exon_genomecov.txt',
     threads: 1
     resources:
-        mem_gb = config['hpcParameters']['intermediate_memory_gb'],
+        mem_gb = config['hpc_parameters']['intermediate_memory_gb'],
         time = config['runtime']['medium'],
     conda:
         '../envs/biscuit.yaml'
@@ -159,7 +159,7 @@ rule obs_exp_coverage_genomecov_genic:
         f'{output_directory}/benchmarks/obs_exp/{{sample}}.genic_genomecov.txt',
     threads: 1
     resources:
-        mem_gb = config['hpcParameters']['intermediate_memory_gb'],
+        mem_gb = config['hpc_parameters']['intermediate_memory_gb'],
         time = config['runtime']['medium'],
     conda:
         '../envs/biscuit.yaml'
@@ -186,7 +186,7 @@ rule obs_exp_coverage_genomecov_rmsk:
         f'{output_directory}/benchmarks/obs_exp/{{sample}}.rmsk_genomecov.txt',
     threads: 1
     resources:
-        mem_gb = config['hpcParameters']['intermediate_memory_gb'],
+        mem_gb = config['hpc_parameters']['intermediate_memory_gb'],
         time = config['runtime']['medium'],
     conda:
         '../envs/biscuit.yaml'
@@ -213,7 +213,7 @@ rule obs_exp_coverage_genomecov_mapped:
         f'{output_directory}/benchmarks/obs_exp/{{sample}}.mapped_genomecov.txt',
     threads: 1
     resources:
-        mem_gb = config['hpcParameters']['intermediate_memory_gb'],
+        mem_gb = config['hpc_parameters']['intermediate_memory_gb'],
         time = config['runtime']['medium'],
     conda:
         '../envs/biscuit.yaml'
@@ -252,7 +252,7 @@ rule obs_exp_coverage_values:
         f'{output_directory}/benchmarks/obs_exp/{{sample}}.feature_sizes.txt',
     threads: 1
     resources:
-        mem_gb = config['hpcParameters']['intermediate_memory_gb'],
+        mem_gb = config['hpc_parameters']['intermediate_memory_gb'],
         time = config['runtime']['medium'],
     conda:
         '../envs/python_packages.yaml'
@@ -284,7 +284,7 @@ rule obs_exp_coverage_plot:
         f'{output_directory}/benchmarks/obs_exp/plot_obs_exp.txt',
     threads: 1
     resources:
-        mem_gb = config['hpcParameters']['intermediate_memory_gb'],
+        mem_gb = config['hpc_parameters']['intermediate_memory_gb'],
         time = config['runtime']['medium'],
     conda:
         '../envs/python_packages.yaml'

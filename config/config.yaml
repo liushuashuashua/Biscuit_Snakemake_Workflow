@@ -157,7 +157,7 @@ envmodules:
 #     small_memory_gb: low amount of memory to request
 #     trim_threads: number of threads to run trim_galore with
 #     pileup_threads: number of threads to run biscuit pileup with
-hpcParameters:
+hpc_parameters:
     wcgw_threads: 16
     biscuit_sifter_threads: 20
     samtools_index_threads: 8

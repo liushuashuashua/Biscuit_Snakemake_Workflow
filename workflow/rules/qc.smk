@@ -17,7 +17,7 @@ rule samtools_flagstat:
     benchmark:
         f'{output_directory}/benchmarks/samtools_flagstat/{{sample}}.txt'
     resources:
-        mem_gb = config['hpcParameters']['intermediate_memory_gb'],
+        mem_gb = config['hpc_parameters']['intermediate_memory_gb'],
         time = config['runtime']['medium'],
     conda:
         '../envs/biscuit.yaml'
@@ -64,7 +64,7 @@ rule biscuit_qc:
         f'{output_directory}/benchmarks/biscuit_qc/{{sample}}.txt'
     threads: 8
     resources:
-        mem_gb = config['hpcParameters']['intermediate_memory_gb'],
+        mem_gb = config['hpc_parameters']['intermediate_memory_gb'],
         time = config['runtime']['medium'],
     conda:
         '../envs/biscuit.yaml'
@@ -102,7 +102,7 @@ rule preseq:
         f'{output_directory}/benchmarks/preseq/{{sample}}.txt',
     threads: 1,
     resources:
-        mem_gb = config['hpcParameters']['intermediate_memory_gb'],
+        mem_gb = config['hpc_parameters']['intermediate_memory_gb'],
         time = config['runtime']['medium'],
     conda:
         '../envs/preseq.yaml'
@@ -164,7 +164,7 @@ rule multiQC:
         f'{output_directory}/benchmarks/multiQC.txt'
     threads: 1
     resources:
-        mem_gb=config['hpcParameters']['small_memory_gb'],
+        mem_gb=config['hpc_parameters']['small_memory_gb'],
         time = config['runtime']['medium']
     conda:
         '../envs/python_packages.yaml'
@@ -187,7 +187,7 @@ rule percent_covered:
         f'{output_directory}/benchmarks/percent_covered.txt',
     threads: 1
     resources:
-        mem_gb=config['hpcParameters']['small_memory_gb'],
+        mem_gb=config['hpc_parameters']['small_memory_gb'],
         time = config['runtime']['short'],
     conda:
         '../envs/python_packages.yaml'
@@ -211,7 +211,7 @@ if config['control_vectors']:
             f'{output_directory}/benchmarks/qc_vectors/{{sample}}.txt',
         threads: 1
         resources:
-            mem_gb=config['hpcParameters']['small_memory_gb'],
+            mem_gb=config['hpc_parameters']['small_memory_gb'],
             time = config['runtime']['medium'],
         conda:
             '../envs/biscuit.yaml'
@@ -242,7 +242,7 @@ if config['control_vectors']:
             f'{output_directory}/benchmarks/qc_vectors/control_vector_boxplot.txt',
         threads: 1
         resources:
-            mem_gb=config['hpcParameters']['small_memory_gb'],
+            mem_gb=config['hpc_parameters']['small_memory_gb'],
             time = config['runtime']['short'],
         conda:
             '../envs/r.yaml',

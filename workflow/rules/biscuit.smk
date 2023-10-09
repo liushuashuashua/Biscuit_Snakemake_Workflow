@@ -21,7 +21,7 @@ if config['build_ref_with_methylation_controls']:
             f'{output_directory}/benchmarks/build_merged_reference_index.txt',
         threads: 2
         resources:
-            mem_gb=config['hpcParameters']['small_memory_gb'],
+            mem_gb=config['hpc_parameters']['small_memory_gb'],
             time = config['runtime']['medium'],
         conda:
             '../envs/biscuit.yaml'
@@ -89,8 +89,8 @@ rule biscuit_sifter:
         PU = config['sam_header']['PU'],
         SM = '{sample}',
         lib_type = config['biscuit']['lib_type'],
-        bb_threads = config['hpcParameters']['biscuit_sifter_threads'],
-        st_threads = config['hpcParameters']['samtools_index_threads'],
+        bb_threads = config['hpc_parameters']['biscuit_sifter_threads'],
+        st_threads = config['hpc_parameters']['samtools_index_threads'],
     log:
         biscuit = f'{output_directory}/logs/biscuit/biscuit_sifter.{{sample}}.log',
         dupsifter = f'{output_directory}/logs/biscuit/dupsifter.{{sample}}.log',
@@ -98,9 +98,9 @@ rule biscuit_sifter:
         samtools_index = f'{output_directory}/logs/biscuit/samtools_index.{{sample}}.log',
     benchmark:
         f'{output_directory}/benchmarks/biscuit_sifter/{{sample}}.txt'
-    threads: config['hpcParameters']['biscuit_sifter_threads'] + config['hpcParameters']['samtools_index_threads']
+    threads: config['hpc_parameters']['biscuit_sifter_threads'] + config['hpc_parameters']['samtools_index_threads']
     resources:
-        mem_gb = config['hpcParameters']['max_memory_gb'],
+        mem_gb = config['hpc_parameters']['max_memory_gb'],
         time = config['runtime']['long'],
     conda:
         '../envs/biscuit.yaml'
@@ -147,9 +147,9 @@ rule biscuit_pileup:
         bed_tbi = f'{output_directory}/logs/biscuit_pileup/{{sample}}.bed_tabix.log',
     benchmark:
         f'{output_directory}/benchmarks/biscuit_pileup/{{sample}}.txt',
-    threads: config['hpcParameters']['pileup_threads']
+    threads: config['hpc_parameters']['pileup_threads']
     resources:
-        mem_gb = config['hpcParameters']['intermediate_memory_gb'],
+        mem_gb = config['hpc_parameters']['intermediate_memory_gb'],
         time = config['runtime']['medium'],
     wildcard_constraints:
         sample = '.*[^(_mergecg)]',
@@ -192,7 +192,7 @@ rule biscuit_mergecg:
         f'{output_directory}/benchmarks/biscuit_mergecg/{{sample}}.txt',
     threads: 8
     resources:
-        mem_gb = config['hpcParameters']['intermediate_memory_gb'],
+        mem_gb = config['hpc_parameters']['intermediate_memory_gb'],
         time = config['runtime']['medium'],
     wildcard_constraints:
         sample = '.*[^(_mergecg)]'
@@ -228,7 +228,7 @@ rule biscuit_snps:
         f'{output_directory}/benchmarks/biscuit_snps/{{sample}}.txt',
     threads: 1
     resources:
-        mem_gb = config['hpcParameters']['intermediate_memory_gb'],
+        mem_gb = config['hpc_parameters']['intermediate_memory_gb'],
         time = config['runtime']['medium'],
     conda:
         '../envs/biscuit.yaml'
@@ -258,9 +258,9 @@ rule biscuit_epiread:
         f'{output_directory}/logs/epiread/epiread.{{sample}}.log',
     benchmark:
         f'{output_directory}/benchmarks/biscuit_epiread/{{sample}}.txt'
-    threads: config['hpcParameters']['pileup_threads']
+    threads: config['hpc_parameters']['pileup_threads']
     resources:
-        mem_gb = config['hpcParameters']['intermediate_memory_gb'],
+        mem_gb = config['hpc_parameters']['intermediate_memory_gb'],
         time = config['runtime']['medium'],
     conda:
         '../envs/biscuit.yaml'

@@ -21,7 +21,7 @@ rule get_regions_for_centered_bin_averages_from_bed:
         f'{output_directory}/benchmarks/region_centered_bin_averages/build_region.log',
     threads: 1
     resources:
-        mem_gb = config['hpcParameters']['small_memory_gb'],
+        mem_gb = config['hpc_parameters']['small_memory_gb'],
         time = config['runtime']['medium'],
     conda:
         '../envs/python_packages.yaml'
@@ -45,7 +45,7 @@ rule region_centered_bin_averages:
         f'{output_directory}/benchmarks/region_centered_bin_averages/{{sample}}.txt',
     threads: 1,
     resources:
-        mem_gb = config['hpcParameters']['small_memory_gb'],
+        mem_gb = config['hpc_parameters']['small_memory_gb'],
         time = config['runtime']['medium'],
     conda:
         '../envs/biscuit.yaml'
