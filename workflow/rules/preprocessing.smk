@@ -16,7 +16,7 @@ checkpoint rename_fastq_files:
         f'{output_directory}/logs/rename/rename.log',
     threads: 1,
     resources:
-        mem_gb = config['hpcParameters']['smallMemoryGb'],
+        mem_gb = config['hpcParameters']['small_memory_gb'],
         time = config['runtime']['short'],
     conda:
         '../envs/r.yaml'
@@ -54,9 +54,9 @@ rule raw_fastqc:
         '../envs/babraham.yaml'
     envmodules:
         config['envmodules']['fastqc'],
-    threads: config['hpcParameters']['trimThreads'],
+    threads: config['hpcParameters']['trim_threads'],
     resources:
-        mem_gb = config['hpcParameters']['smallMemoryGb'],
+        mem_gb = config['hpcParameters']['small_memory_gb'],
         time = config['runtime']['medium'],
     shell:
         """
@@ -83,9 +83,9 @@ rule trim_reads:
     envmodules:
         config['envmodules']['trim_galore'],
         config['envmodules']['fastqc'],
-    threads: config['hpcParameters']['trimThreads']
+    threads: config['hpcParameters']['trim_threads']
     resources:
-        mem_gb = config['hpcParameters']['smallMemoryGb'],
+        mem_gb = config['hpcParameters']['small_memory_gb'],
         time = config['runtime']['medium'],
     shell:
         """
@@ -123,7 +123,7 @@ rule fastq_screen:
     threads: 8
     resources:
         nodes = 1,
-        mem_gb = config['hpcParameters']['intermediateMemoryGb'],
+        mem_gb = config['hpcParameters']['intermediate_memory_gb'],
         time = config['runtime']['medium'],
     conda:
         '../envs/babraham.yaml'

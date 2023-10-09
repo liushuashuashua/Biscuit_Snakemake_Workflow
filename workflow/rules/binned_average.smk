@@ -22,14 +22,14 @@ rule binned_averages:
         outfile_no_gz = expand("{{output_directory}}/analysis/binned_averages/{{sample}}_{BIN_TAGS}.bed", BIN_TAGS = bin_tags), # arg to find_binned_average.sh not initially gz
         bins = config["binned_averages"]["bin_sizes"], # bins and bin_tags correspond
         tags = bin_tags,
-        covFilter = config["binned_averages"]["covFilter"]
+        cov_filter = config["binned_averages"]["cov_filter"]
     output:
         outfile = expand("{{output_directory}}/analysis/binned_averages/{{sample}}_{BIN_TAGS}.bed.gz", BIN_TAGS = bin_tags)
     log:
         f'{{output_directory}}/logs/binned_averages/{{sample}}.log',
     threads: 1
     resources:
-        mem_gb = config["hpcParameters"]["smallMemoryGb"],
+        mem_gb = config["hpcParameters"]["small_memory_gb"],
         time = config["runtime"]["medium"]
     benchmark:
         f'{{output_directory}}/benchmarks/binned_averages/{{sample}}.log',
@@ -48,7 +48,7 @@ rule binned_averages:
             bash workflow/scripts/find_binned_average.sh \
                  {input.reference}.fai \
                  ${{bins[$i]}} \
-                 {params.covFilter} \
+                 {params.cov_filter} \
                  {input.bed} \
                  ${{outfiles[$i]}} # find_binned_average gzips the file, so different than {{output.outfile}}
         done

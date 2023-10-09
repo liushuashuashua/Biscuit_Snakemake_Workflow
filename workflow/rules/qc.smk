@@ -17,7 +17,7 @@ rule samtools_flagstat:
     benchmark:
         f'{output_directory}/benchmarks/samtools_flagstat/{{sample}}.txt'
     resources:
-        mem_gb = config['hpcParameters']['intermediateMemoryGb'],
+        mem_gb = config['hpcParameters']['intermediate_memory_gb'],
         time = config['runtime']['medium'],
     conda:
         '../envs/biscuit.yaml'
@@ -64,7 +64,7 @@ rule biscuit_qc:
         f'{output_directory}/benchmarks/biscuit_qc/{{sample}}.txt'
     threads: 8
     resources:
-        mem_gb = config['hpcParameters']['intermediateMemoryGb'],
+        mem_gb = config['hpcParameters']['intermediate_memory_gb'],
         time = config['runtime']['medium'],
     conda:
         '../envs/biscuit.yaml'
@@ -102,7 +102,7 @@ rule preseq:
         f'{output_directory}/benchmarks/preseq/{{sample}}.txt',
     threads: 1,
     resources:
-        mem_gb = config['hpcParameters']['intermediateMemoryGb'],
+        mem_gb = config['hpcParameters']['intermediate_memory_gb'],
         time = config['runtime']['medium'],
     conda:
         '../envs/preseq.yaml'
@@ -120,7 +120,7 @@ def get_multiQC_params(wildcards):
     indirs = f'{raw} {out}/analysis/BISCUITqc {out}/analysis/raw_fastqc {out}/analysis/align'
     if config['run_fastq_screen']:
         indirs += f' {out}/analysis/fastq_screen' # space needed at beginning to separate directories
-    if config['trim_galore']['trim_before_BISCUIT']:
+    if config['trim_galore']['trim_before_biscuit']:
         indirs += f' {out}/analysis/trim_reads' # space needed at beginning to separate directories
     if config['preseq']:
         indirs += f' {out}/analysis/preseq' # space needed at beginning to separate directories
@@ -149,7 +149,7 @@ rule multiQC:
         # fastq_screen
         expand(f'{output_directory}/analysis/fastq_screen/{{samples.sample}}-1-R{{read}}_screen.txt', read=[1,2], samples=SAMPLES.itertuples()) if config['run_fastq_screen'] else [],
         # trim_galore
-        expand(f'{output_directory}/analysis/trim_reads/{{samples.sample}}-R{{read}}_val_{{read}}_merged.fq.gz', read=[1,2], samples=SAMPLES.itertuples()) if config['trim_galore']['trim_before_BISCUIT'] else [],
+        expand(f'{output_directory}/analysis/trim_reads/{{samples.sample}}-R{{read}}_val_{{read}}_merged.fq.gz', read=[1,2], samples=SAMPLES.itertuples()) if config['trim_galore']['trim_before_biscuit'] else [],
         # preseq
         expand(f'{output_directory}/analysis/preseq/{{samples.sample}}.ccurve.txt', samples=SAMPLES.itertuples()) if config['preseq'] else [],
     output:
@@ -164,7 +164,7 @@ rule multiQC:
         f'{output_directory}/benchmarks/multiQC.txt'
     threads: 1
     resources:
-        mem_gb=config['hpcParameters']['smallMemoryGb'],
+        mem_gb=config['hpcParameters']['small_memory_gb'],
         time = config['runtime']['medium']
     conda:
         '../envs/python_packages.yaml'
@@ -187,7 +187,7 @@ rule percent_covered:
         f'{output_directory}/benchmarks/percent_covered.txt',
     threads: 1
     resources:
-        mem_gb=config['hpcParameters']['smallMemoryGb'],
+        mem_gb=config['hpcParameters']['small_memory_gb'],
         time = config['runtime']['short'],
     conda:
         '../envs/python_packages.yaml'
@@ -211,7 +211,7 @@ if config['control_vectors']:
             f'{output_directory}/benchmarks/qc_vectors/{{sample}}.txt',
         threads: 1
         resources:
-            mem_gb=config['hpcParameters']['smallMemoryGb'],
+            mem_gb=config['hpcParameters']['small_memory_gb'],
             time = config['runtime']['medium'],
         conda:
             '../envs/biscuit.yaml'
@@ -242,7 +242,7 @@ if config['control_vectors']:
             f'{output_directory}/benchmarks/qc_vectors/control_vector_boxplot.txt',
         threads: 1
         resources:
-            mem_gb=config['hpcParameters']['smallMemoryGb'],
+            mem_gb=config['hpcParameters']['small_memory_gb'],
             time = config['runtime']['short'],
         conda:
             '../envs/r.yaml',

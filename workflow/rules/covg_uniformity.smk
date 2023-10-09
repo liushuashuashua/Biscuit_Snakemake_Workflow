@@ -21,7 +21,7 @@ rule covg_uniformity:
         f'{output_directory}/benchmarks/covg_uniformity/{{sample}}.uniformity.txt',
     threads: 1
     resources:
-        mem_gb = config['hpcParameters']['intermediateMemoryGb'],
+        mem_gb = config['hpcParameters']['intermediate_memory_gb'],
         time = config['runtime']['medium'],
     conda:
         '../envs/biscuit.yaml'
@@ -57,7 +57,7 @@ rule uniformity_plot:
         f'{output_directory}/benchmarks/covg_uniformity/uniformity_plot.txt',
     threads: 1
     resources:
-        mem_gb = config['hpcParameters']['intermediateMemoryGb'],
+        mem_gb = config['hpcParameters']['intermediate_memory_gb'],
         time = config['runtime']['medium'],
     conda:
         '../envs/python_packages.yaml'
