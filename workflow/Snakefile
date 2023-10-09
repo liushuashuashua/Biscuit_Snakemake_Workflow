@@ -89,7 +89,9 @@ rule all:
         ## Do post-processing QC
         # MultiQC
         f'{output_directory}/analysis/multiqc/multiqc_report.html',
-        f'{output_directory}/analysis/percent_genome_covered.pdf',
+
+        # Percent of genome covered
+        f'{output_directory}/analysis/percent_genome_covered.pdf' if config['percent_covered']['run'] else [],
 
         ## Run any other QC steps
         # Observed / Expected coverage
