@@ -1,39 +1,95 @@
+# HPC Parameters
+#-----------------------------------------------------------------------------------------------------------------------
+# Memory and Thread parameters used when running on a cluster
+#     wcgw_threads: number of threads to create solo-WCGW assets with
+#     biscuit_sifter_threads: number of threads to run biscuit align with
+#     samtools_index_threads: number of threads to index BAMs with
+#     max_memory_gb: high amount of memory to request
+#     intermediate_memory_gb: middle amount of memory to request
+#     small_memory_gb: low amount of memory to request
+#     trim_threads: number of threads to run trim_galore with
+#     pileup_threads: number of threads to run biscuit pileup with
+hpc_parameters:
+    wcgw_threads: 16
+    trim_threads: 8
+    biscuit_sifter_threads: 20
+    samtools_index_threads: 8
+    pileup_threads: 8
+    max_memory_gb: 245
+    intermediate_memory_gb: 80
+    small_memory_gb: 20
+
+# Time to request when running on a cluster
+# Give in 'D-HH:MM:SS', must be given as a string for pipeline to work
+runtime:
+    short: '0-01:00:00'
+    medium: '1-00:00:00'
+    long: '2-00:00:00'
+#-----------------------------------------------------------------------------------------------------------------------
+
+# Input and Output for Pipeline
+#-----------------------------------------------------------------------------------------------------------------------
 # Reference genome
 #     fasta: absolute path to reference FASTA file
-#     index: does not need to be different from "fasta", but might be useful if 2-bit packed reference doesn't have .fa extension or is named differently
-#     assets: prebuilt assets and scripts to build custom assets can be found at https://github.com/huishenlab/biscuit/releases/
+#     index: does not need to be different from "fasta", but might be useful if 2-bit packed reference doesn't have .fa
+#            extension or is named differently
+#     assets: prebuilt assets and scripts to build custom assets can be found at
+#             https://github.com/huishenlab/biscuit/releases/
 ref:
     fasta: /path/to/your/fasta/file/genome.fa
     index: /path/to/your/biscuit/index/base/that/could/be/the/same/as/fasta/genome.fa
     assets: /path/to/your/biscuit_qc/assets
 
-# Directory where raw FASTQs live, can be absolute path or path relative to Snakefile
+# Directory where raw FASTQs live, can be absolute path or path relative to top directory of pipeline
 fastqs: raw_data
 
-# Samplesheet for specifying sample names and corresponding FASTQ files, can be absolute path or path relative to Snakefile
+# Samplesheet for specifying sample names and corresponding FASTQ files, can be absolute path or path relative to
+# top directory of pipeline
 samples: config/samples.tsv
 
-# Directory for writing analysis/ directory to (if '', write to same directory as Snakefile)
+# Directory for writing analysis/ directory to (if '', write to same directory as top directory of pipeline)
 output_directory: ''
+#-----------------------------------------------------------------------------------------------------------------------
 
+# Preprocessing Options
+#-----------------------------------------------------------------------------------------------------------------------
 # Create BISCUITqc assets, CpG seascape (islands, shores, shelves, and open seas), and genomic feature BED files
 #     run: run if True (output will be in a directory called assets/), skip if False
 #     genome: genome to create files for (possible choices: 'hg38', 'hg19', 'mm10', 'mm9')
-# While the BISCUITqc asset files are readily availabe on GitHub, the seascape and genomic features need to be generated
-# from various annotation files from UCSC and GENCODE. You are welcome to create these yourself (using the naming scheme
-# seen in workflow/rules/create_assets.smk) and point to them in obs_exp['assets']
+# While the BISCUITqc asset files are readily available on GitHub, the seascape and genomic features need to be
+# generated from various annotation files from UCSC and GENCODE. You are welcome to create these yourself (using the
+# naming scheme seen in workflow/rules/create_assets.smk) and point to them in obs_exp['assets']
 create_assets:
     run: False
     genome: 'hg38'
 
 # Turn on/off read trimming, handle additional trim_galore options
 #     trim_before_biscuit: run trimming (set as True) or not (set as False)
-#     args_list: additonal arguments to pass to trim_galore (note --paired, --fastqc, --cores, and --output_dir are always included), '' will not include any extra arguments
-#         Note, when processing data generated with the Adaptase module, it is highly suggested to set args_list: '--clip_R2 15'
+#     args_list: additonal arguments to pass to trim_galore (note --paired, --fastqc, --cores, and --output_dir are
+#                always included), '' will not include any extra arguments
+# Note, when processing data generated with the Adaptase module, it is highly suggested to set args_list: '--clip_R2 15'
 trim_galore:
     trim_before_biscuit: False
     args_list: '--clip_R2 15'
 
+# Create a joint reference with ref['fasta'], lambda phage, and pUC19 genomes (lambda phage and pUC19 genomes provided
+# in bin/)
+# Lambda phage and pUC19 control vectors are only included in Illumina's NEBNext® Enzymatic Methyl-seq Kit
+# If True - create a joint reference and use this as reference during alignment and further processing
+# If False - ref['fasta'] will be used as expected
+build_ref_with_methylation_controls: False
+
+# Run fastq_screen on data
+# If True - run fastq_screen with --bisulfite mode (uses Bismark)
+# If False - skip this step
+run_fastq_screen: False
+
+# fastq_screen configure file path passed to --conf in fastq_screen
+fastq_screen_conf: /primary/projects/bbc/references/fastq_screen/downloaded_20200309/FastQ_Screen_Genomes_Bisulfite/fastq_screen.conf
+#-----------------------------------------------------------------------------------------------------------------------
+
+# BISCUIT Options
+#-----------------------------------------------------------------------------------------------------------------------
 # BISCUIT alignment options
 #     lib_type: biscuit align -b option (for directional vs non-directional alignment)
 biscuit:
@@ -58,32 +114,24 @@ generate_snps: False
 
 # Create epiBED files (True) or not (False)? Sets generate_snps to True if epiread is True
 epiread: False
+#-----------------------------------------------------------------------------------------------------------------------
 
-# Create a joint reference with ref['fasta'], lambda phage, and pUC19 genomes (lambda phage and pUC19 genomes proved in bin/)
-# Lambda phage and pUC19 control vectors are only included in Illumina's NEBNext® Enzymatic Methyl-seq Kit
-# If True - create a joint reference and use this as reference during alignment and further processing
-# If False - ref['fasta'] will be used as expected
-build_ref_with_methylation_controls: False
-
-# Calculate lambda phage and pUC19 methylation levels and create summary plot (output as <output_directory>/analysis/qc_vectors/control_vector_boxplot.pdf)
-# Only useful if the ref genome included the control vectors with fasta headers >J02459.1 (lamdba / unmethylated control) and >M77789.2 (puc19 / methylated control). 
-# The ref genome can be modified automatically to include these control vectors as the first two contigs by setting config["build_ref_with_methylation_controls"].
+# Optional Analysis Output
+#-----------------------------------------------------------------------------------------------------------------------
+# Calculate lambda phage and pUC19 methylation levels and create summary plot
+# Only useful if the reference genome included the control vectors with fasta headers:
+#     >J02459.1 (lamdba / unmethylated control) and >M77789.2 (puc19 / methylated control). 
+# The ref genome can be modified automatically to include these control vectors as the first two contigs by setting
+#     config["build_ref_with_methylation_controls"].
 # If True - calculate methylation and create plot
 # If False - skip this step
 control_vectors: False
 
-# Run fastq_screen on data
-# If True - run fastq_screen with --bisulfite mode (uses Bismark)
-# If False - skip this step
-run_fastq_screen: False
-
-# fastq_screen configure file path passed to --conf in fastq_screen
-fastq_screen_conf: /primary/projects/bbc/references/fastq_screen/downloaded_20200309/FastQ_Screen_Genomes_Bisulfite/fastq_screen.conf
-
 # Run preseq on data
 # If True - run preseq
 # If False - skip this step
-# preseq_options - other options to include in preseq c_curve (output file, paired end, and BAM input options already included)
+# preseq_options - other options to include in preseq c_curve (output file, paired end, and BAM input options already
+#     included)
 preseq: False
 preseq_options: ''
 
@@ -108,12 +156,32 @@ covg_uniformity:
     run: False
     assets: assets/hg38
 
+# Create plot of the percent of the genome covered by each sample
 percent_covered:
     run: False
 
+# Create binned average methylation values using bin/find_binned_averages.sh
+binned_averages:
+   run: False
+   cov_filter: 1
+   bin_sizes: [10000, 100000, 1000000] # one bin_sizes will also work, but needs to be a python list!
+   
+# Turn on/off region_centered_bin_averages
+#     run: run rules involved with this
+#     region_file: BED file with regions to build bins around
+#     args_list: additonal arguments to pass to workflow/scripts/region_centered_bin_averages.py
+#                for more info, run "python workflow/scripts/region_centered_bin_averages.py --help"
+region_centered_bin_averages:
+    run: False
+    region_file: /path/to/a/region/file/for/which/you/want/centered/bins.bed
+    args_list: '--flankstep 5 --flanknumber 200 --numinternal 1 --strand 4 --middle --collapse'
+#-----------------------------------------------------------------------------------------------------------------------
+
+# Environment Modules
+#-----------------------------------------------------------------------------------------------------------------------
 # Environment modules paths used in "module load <string>" (pending you have a module system available)
 # If your system does not use environmental modules, then executables for all of the modules must be in your PATH and
-# each tool should be set to NULL (as shown below).
+# each tool should be set to "NULL" (i.e., samtools: "NULL").
 # If all dependency executables are in PATH and the module is specified with NULL, the workflow will still run with
 # warnings that modules could not be loaded.
 envmodules: 
@@ -133,64 +201,4 @@ envmodules:
     fastq_screen: bbc2/fastq_screen/fastq_screen-0.14.0
     bismark: bbc2/bismark/bismark-0.24.0
     python3: bbc2/python3/python-3.11.3
-    # if you e.g. don't have a module system then put the envmodules as follows:
-    #~ samtools: "NULL"
-    #~ R: "NULL"
-    #~ snakemake: "NULL"
-    #~ trim_galore: "NULL"
-    #~ biscuit: "NULL"
-    #~ dupsifter: "NULL"
-    #~ preseq: "NULL"
-    #~ htslib: "NULL"
-    #~ bedtools: "NULL"
-    #~ fastqc: "NULL"
-    #~ multiqc: "NULL"
-    #~ parallel: "NULL"
-    #~ pigz: "NULL"
-    #~ fastq_screen: "NULL"
-    #~ bismark: "NULL"
-    #~ python3: "NULL"
-
-# Memory and Thread parameters used when running on a cluster
-#     wcgw_threads: number of threads to create solo-WCGW assets with
-#     biscuit_sifter_threads: number of threads to run biscuit align with
-#     samtools_index_threads: number of threads to index BAMs with
-#     max_memory_gb: high amount of memory to request
-#     intermediate_memory_gb: middle amount of memory to request
-#     small_memory_gb: low amount of memory to request
-#     trim_threads: number of threads to run trim_galore with
-#     pileup_threads: number of threads to run biscuit pileup with
-hpc_parameters:
-    wcgw_threads: 16
-    biscuit_sifter_threads: 20
-    samtools_index_threads: 8
-    max_memory_gb: 245
-    intermediate_memory_gb: 80
-    small_memory_gb: 20
-    trim_threads: 8
-    pileup_threads: 8
-
-# Time to request when running on a cluster, names should be pretty self explanatory...
-# Give in 'D-HH:MM:SS', must be given as a string for pipeline to work
-runtime:
-    short: '0-01:00:00'
-    medium: '1-00:00:00'
-    long: '2-00:00:00'
-
-
-# Create binned average methylation values using bin/find_binned_averages.sh
-binned_averages:
-   run: False
-   cov_filter: 1
-   bin_sizes: [10000, 100000, 1000000] # one bin_sizes will also work, but needs to be a python list!
-   #~ bin_sizes: [1000000] # one bin_sizes will also work, but needs to be a python list!
-   
-# Turn on/off region_centered_bin_averages
-#     run: run rules involved with this
-#     region_file: BED file with regions to build bins around
-#     args_list: additonal arguments to pass to workflow/scripts/region_centered_bin_averages.py
-#                for more info, run "python workflow/scripts/region_centered_bin_averages.py --help"
-region_centered_bin_averages:
-    run: False
-    region_file: /path/to/a/region/file/for/which/you/want/centered/bins.bed
-    args_list: '--flankstep 5 --flanknumber 200 --numinternal 1 --strand 4 --middle --collapse'
+#-----------------------------------------------------------------------------------------------------------------------
