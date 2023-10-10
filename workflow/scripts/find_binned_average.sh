@@ -14,22 +14,28 @@
 ##     - Initial creation
 ##   Nov 2021
 ##     - replace "filtered.tmp.bed" with hash to prevent problems when running multiple jobs in parallel
+##   Oct 2023
+##     - add check for empty file before finding average
 ##
 ################################################################################
 
 set -euo pipefail
-
-
 
 # Find binned average values
 function find_averages {
     tmp=$(echo $RANDOM|md5sum|head -c 20; echo) # get random name for tmp file
     if [[ `file ${infile}` =~ "gzip" ]]; then
         zcat ${infile} |
-        awk -v filt=${filter} '{ if ($5 >= filt) { print } }' > $tmp
+        awk -v filt=${filter} '{ if ($5 >= filt) { print } }' > ${tmp}
     else
         awk -v filt=${filter} '{ if ($5 >= filt) { print } }' \
-        ${infile} > $tmp
+        ${infile} > ${tmp}
+    fi
+
+    if [ ! -s ${tmp} ]; then
+        >&2 echo "ERROR: Filtered BED file is empty."
+        rm -f ${tmp}
+        exit 1
     fi
 
     # Find average beta value across bins
@@ -39,11 +45,11 @@ function find_averages {
     bedtools map \
         -prec 2 \
         -a - \
-        -b $tmp \
+        -b ${tmp} \
         -c 4 -o mean |
     gzip > ${otfile}.gz
 
-    rm -f $tmp
+    rm -f ${tmp}
 }
 
 # Print helpful usage information

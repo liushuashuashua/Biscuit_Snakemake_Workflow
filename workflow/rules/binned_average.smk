@@ -50,7 +50,7 @@ rule binned_averages:
                  ${{bins[$i]}} \
                  {params.cov_filter} \
                  {input.bed} \
-                 ${{outfiles[$i]}} # find_binned_average gzips the file, so different than {{output.outfile}}
+                 ${{outfiles[$i]}} 2> {log}
         done
         
         """   
