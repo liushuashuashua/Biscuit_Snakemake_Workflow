@@ -106,6 +106,7 @@ rule biscuit_sifter:
         '../envs/biscuit.yaml'
     envmodules:
         config['envmodules']['biscuit'],
+        config['envmodules']['dupsifter'],
         config['envmodules']['samtools'],
         config['envmodules']['htslib'],
     shell:

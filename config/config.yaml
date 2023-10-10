@@ -189,7 +189,7 @@ envmodules:
     snakemake: bbc2/snakemake/snakemake-7.25.0
     trim_galore: bbc2/trim_galore/trim_galore-0.6.10
     biscuit: bbc2/biscuit/biscuit_1_2_0
-    dupsifter: bbc2/dupsifter/dupsifter-1.2.0
+    dupsifter: bbc2/dupsifter/dupsifter_1_2_0
     preseq: bbc2/preseq/preseq-3.2.0
     htslib: bbc2/htslib/htslib-1.17
     bedtools: bbc2/bedtools/bedtools-2.30.0
