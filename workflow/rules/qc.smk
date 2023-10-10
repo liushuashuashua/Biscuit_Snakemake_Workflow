@@ -95,7 +95,7 @@ rule preseq:
     params:
         dir = f'{output_directory}/analysis/preseq',
         out = f'{output_directory}/analysis/preseq/{{sample}}.ccurve.txt',
-        opt = config['preseq_options'],
+        opt = config['preseq']['args_list'],
     log:
         f'{output_directory}/logs/preseq/{{sample}}.log',
     benchmark:
@@ -151,7 +151,7 @@ rule multiQC:
         # trim_galore
         expand(f'{output_directory}/analysis/trim_reads/{{samples.sample}}-R{{read}}_val_{{read}}_merged.fq.gz', read=[1,2], samples=SAMPLES.itertuples()) if config['trim_galore']['trim_before_biscuit'] else [],
         # preseq
-        expand(f'{output_directory}/analysis/preseq/{{samples.sample}}.ccurve.txt', samples=SAMPLES.itertuples()) if config['preseq'] else [],
+        expand(f'{output_directory}/analysis/preseq/{{samples.sample}}.ccurve.txt', samples=SAMPLES.itertuples()) if config['preseq']['run'] else [],
     output:
         directory(f'{output_directory}/analysis/multiqc/multiqc_report_data',),
         f'{output_directory}/analysis/multiqc/multiqc_report.html',

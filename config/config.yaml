@@ -127,12 +127,12 @@ epiread: False
 control_vectors: False
 
 # Run preseq on data
-# If True - run preseq
-# If False - skip this step
-# preseq_options - other options to include in preseq c_curve (output file, paired end, and BAM input options already
-#     included)
-preseq: False
-preseq_options: ''
+#     run: run preseq if True, skip if False
+#     args_list: other options to include in preseq c_curve (output file, paired end, and BAM input options already
+#              included)
+preseq:
+    run: False
+    args_list: ''
 
 # Calculate the ratio observed/expected coverage based on bismap results for different genomic features
 # run - create obs/exp plots if True, skip if False
