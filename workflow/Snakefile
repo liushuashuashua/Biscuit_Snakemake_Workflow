@@ -52,7 +52,7 @@ rule all:
         expand(
             f'{output_directory}/analysis/fastq_screen/{{samples.sample}}-1-R{{read}}_screen.html',
             read=[1,2], samples=SAMPLES.itertuples()
-        ) if config['run_fastq_screen'] else [],
+        ) if config['fastq_screen']['run'] else [],
 
         # Create asset files
         expand(

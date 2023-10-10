@@ -114,7 +114,7 @@ rule fastq_screen:
         f'{output_directory}/analysis/fastq_screen/{{sample}}-1-R1_screen.txt',
         f'{output_directory}/analysis/fastq_screen/{{sample}}-1-R2_screen.txt',
     params:
-        conf = config['fastq_screen_conf'],
+        conf = config['fastq_screen']['conf'],
         output_dir = f'{output_directory}/analysis/fastq_screen/',
     log:
         fastq_screen = f'{output_directory}/logs/fastq_screen/{{sample}}.log',

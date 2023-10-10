@@ -80,12 +80,11 @@ trim_galore:
 build_ref_with_methylation_controls: False
 
 # Run fastq_screen on data
-# If True - run fastq_screen with --bisulfite mode (uses Bismark)
-# If False - skip this step
-run_fastq_screen: False
-
-# fastq_screen configure file path passed to --conf in fastq_screen
-fastq_screen_conf: /primary/projects/bbc/references/fastq_screen/downloaded_20200309/FastQ_Screen_Genomes_Bisulfite/fastq_screen.conf
+#     run: run fastq_screen with --bisulfite option (uses Bismark) if True, else skip
+#     conf: absolute path to fastq_screen config file (passed to --conf option)
+fastq_screen:
+    run: False
+    conf: /primary/projects/bbc/references/fastq_screen/downloaded_20200309/FastQ_Screen_Genomes_Bisulfite/fastq_screen.conf
 #-----------------------------------------------------------------------------------------------------------------------
 
 # BISCUIT Options

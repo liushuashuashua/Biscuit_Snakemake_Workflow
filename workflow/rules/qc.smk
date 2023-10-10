@@ -118,7 +118,7 @@ def get_multiQC_params(wildcards):
     raw = config['fastqs']
     out = output_directory
     indirs = f'{raw} {out}/analysis/BISCUITqc {out}/analysis/raw_fastqc {out}/analysis/align'
-    if config['run_fastq_screen']:
+    if config['fastq_screen']['run']:
         indirs += f' {out}/analysis/fastq_screen' # space needed at beginning to separate directories
     if config['trim_galore']['trim_before_biscuit']:
         indirs += f' {out}/analysis/trim_reads' # space needed at beginning to separate directories
@@ -147,7 +147,7 @@ rule multiQC:
         expand(f'{output_directory}/analysis/BISCUITqc/{{samples.sample}}_covdist_q40_cpg_topgc_table.txt', samples=SAMPLES.itertuples()),
         expand(f'{output_directory}/analysis/BISCUITqc/{{samples.sample}}_cv_table.txt', samples=SAMPLES.itertuples()),
         # fastq_screen
-        expand(f'{output_directory}/analysis/fastq_screen/{{samples.sample}}-1-R{{read}}_screen.txt', read=[1,2], samples=SAMPLES.itertuples()) if config['run_fastq_screen'] else [],
+        expand(f'{output_directory}/analysis/fastq_screen/{{samples.sample}}-1-R{{read}}_screen.txt', read=[1,2], samples=SAMPLES.itertuples()) if config['fastq_screen']['run'] else [],
         # trim_galore
         expand(f'{output_directory}/analysis/trim_reads/{{samples.sample}}-R{{read}}_val_{{read}}_merged.fq.gz', read=[1,2], samples=SAMPLES.itertuples()) if config['trim_galore']['trim_before_biscuit'] else [],
         # preseq
