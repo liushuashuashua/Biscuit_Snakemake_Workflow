@@ -40,8 +40,8 @@ if config['build_ref_with_methylation_controls']:
                 cat {input} <(zcat bin/puc19.fa.gz) <(zcat bin/lambda.fa.gz) | bgzip > {output.ref}
             fi
 
-            biscuit index {output.ref}
-            samtools faidx {output.ref}
+            biscuit index {output.ref} 2> {log}
+            samtools faidx {output.ref} 2>> {log}
             """
 
 def get_biscuit_reference(wildcards):
@@ -231,8 +231,8 @@ rule biscuit_snps:
     shell:
         """
         biscuit vcf2bed {params.args_vcf2bed_snp} -t snp {input.vcf_gz} > {params.snp_bed} 2> {log}
-        bgzip -@ {threads} {params.snp_bed}
-        tabix -p bed {output.snp_bed_gz}
+        bgzip -@ {threads} {params.snp_bed} 2>> {log}
+        tabix -p bed {output.snp_bed_gz} 2>> {log}
         """
 
 rule biscuit_epiread:
@@ -270,6 +270,6 @@ rule biscuit_epiread:
             {input.bam} | \
         sort -k1,1 -k2,2n > {params.epibed} 2> {log}
 
-        bgzip -@ {threads} {params.epibed}
-        tabix -p bed {output.epibed_gz}
+        bgzip -@ {threads} {params.epibed} 2>> {log}
+        tabix -p bed {output.epibed_gz} 2>> {log}
         """
