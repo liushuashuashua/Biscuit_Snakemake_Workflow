@@ -69,7 +69,7 @@ trim_galore:
     trim_before_biscuit: False
     # Additonal arguments to pass to trim_galore (note --paired, --fastqc, --cores, and --output_dir are always
     #     included), '' will not include any extra arguments
-    args_list: '--clip_R2 15'
+    args_list: ''
 
 # Create a joint reference with ref['fasta'], lambda phage, and pUC19 genomes (lambda phage and pUC19 genomes provided
 #     in bin/)
