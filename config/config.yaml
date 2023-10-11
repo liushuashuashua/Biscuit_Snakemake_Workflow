@@ -89,15 +89,28 @@ fastq_screen:
 
 # BISCUIT Options
 #-----------------------------------------------------------------------------------------------------------------------
-# BISCUIT alignment options
-#     lib_type: biscuit align -b option (for directional vs non-directional alignment)
+# args_align: additional options to include in biscuit align (number of threads (-@) and read group (-R) already
+#             included), if '' then default values are used for all values except -@ and -R
+# args_pileup: additional options to include in biscuit pileup (number of threads (-@) and output name (-o) already
+#             included), if '' then default values are used for all values except -@ and -R
+# args_vcf2bed_cg: additional options to include in biscuit vcf2bed (-t cg specified to ensure CG methylation is
+#                  extracted), if '' then default values are used for all other values
+# args_mergecg: additional options to include in biscuit mergecg, if '' then default values are used
+# args_vcf2bed_snp: additional options to include in biscuit vcf2bed (-t snp specified to ensure SNPs are extracted),
+#                   if '' then default values are used for all other values
+# args_epiread: additional options to include in biscuit epiread (number of threads (-@) and SNP file (-B) already
+#               included), if '' then default values are used for all values except -@ and -B
+# extract_snps: call SNPs with BISCUIT (True) or not (False)
+# make_epibeds: create SNP BEDs and epiBED files (True) or not (False)
 biscuit:
-    lib_type: 0
-
-# Input data is from NOMe-seq
-# If True - data is NOMe-seq data
-# If False - data is WGBS or EM-seq
-is_nome: False
+    args_align: ''
+    args_pileup: ''
+    args_vcf2bed_cg: ''
+    args_mergecg: ''
+    args_vcf2bed_snp: ''
+    args_epiread: ''
+    extract_snps: False
+    make_epibeds: False
 
 # Inputs to SAM read group in biscuit align
 #     PL: platform/technology entry
@@ -107,12 +120,6 @@ sam_header:
     PL: il
     PU: nv
     LB: b1
-
-# Call SNPs with BISCUIT (True) or not (False)?
-generate_snps: False
-
-# Create epiBED files (True) or not (False)? Sets generate_snps to True if epiread is True
-epiread: False
 #-----------------------------------------------------------------------------------------------------------------------
 
 # Optional Analysis Output

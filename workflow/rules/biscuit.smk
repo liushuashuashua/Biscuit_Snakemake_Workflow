@@ -82,14 +82,12 @@ rule biscuit_sifter:
         bai = f'{output_directory}/analysis/align/{{sample}}.sorted.markdup.bam.bai',
         dup = f'{output_directory}/analysis/align/{{sample}}.dupsifter.stat',
     params:
-        # don't include the .fa/.fasta suffix for the reference biscuit idx.
+        args_list = config['biscuit']['args_align'],
         LB = config['sam_header']['LB'],
-        ID = '{sample}',
         PL = config['sam_header']['PL'],
         PU = config['sam_header']['PU'],
-        SM = '{sample}',
-        lib_type = config['biscuit']['lib_type'],
-        bb_threads = config['hpc_parameters']['biscuit_sifter_threads'],
+        SM = '{sample}', # also used for ID
+        al_threads = config['hpc_parameters']['biscuit_sifter_threads'],
         st_threads = config['hpc_parameters']['samtools_index_threads'],
     log:
         biscuit = f'{output_directory}/logs/biscuit/biscuit_sifter.{{sample}}.log',
@@ -113,9 +111,9 @@ rule biscuit_sifter:
         """
         # biscuitSifter pipeline
         biscuit align \
-            -@ {params.bb_threads} \
-            -b {params.lib_type} \
-            -R '@RG\tLB:{params.LB}\tID:{params.ID}\tPL:{params.PL}\tPU:{params.PU}\tSM:{params.SM}' \
+            {params.args_list} \
+            -@ {params.al_threads} \
+            -R '@RG\tLB:{params.LB}\tID:{params.SM}\tPL:{params.PL}\tPU:{params.PU}\tSM:{params.SM}' \
             {input.reference} \
             <(zcat {input.R1}) \
             <(zcat {input.R2}) 2> {log.biscuit} | \
@@ -136,9 +134,10 @@ rule biscuit_pileup:
         bed_gz = f'{output_directory}/analysis/pileup/{{sample}}.bed.gz',
         bed_tbi = f'{output_directory}/analysis/pileup/{{sample}}.bed.gz.tbi',
     params:
+        args_pileup = config['biscuit']['args_pileup'],
+        args_vcf2bed_cg = config['biscuit']['args_vcf2bed_cg'],
         vcf = f'{output_directory}/analysis/pileup/{{sample}}.vcf',
         bed = f'{output_directory}/analysis/pileup/{{sample}}.bed',
-        nome = config['is_nome'],
     log:
         pileup = f'{output_directory}/logs/biscuit_pileup/{{sample}}.pileup.log',
         vcf_gz = f'{output_directory}/logs/biscuit_pileup/{{sample}}.vcf_gz.log',
@@ -161,17 +160,13 @@ rule biscuit_pileup:
         config['envmodules']['htslib'],
     shell:
         """
-        if [ {params.nome} == "True" ]; then
-            biscuit pileup -N -@ {threads} -o {params.vcf} {input.ref} {input.bam} 2> {log.pileup}
-        else
-            biscuit pileup -@ {threads} -o {params.vcf} {input.ref} {input.bam} 2> {log.pileup}
-        fi
+        biscuit pileup {params.args_pileup} -@ {threads} -o {params.vcf} {input.ref} {input.bam} 2> {log.pileup}
 
-        bgzip {params.vcf} 2> {log.vcf_gz}
+        bgzip -@ {threads} {params.vcf} 2> {log.vcf_gz}
         tabix -p vcf {output.vcf_gz} 2> {log.vcf_tbi}
 
-        biscuit vcf2bed -t cg {output.vcf_gz} 1> {params.bed} 2> {log.vcf2bed}
-        bgzip {params.bed} 2> {log.bed_gz}
+        biscuit vcf2bed {params.args_vcf2bed_cg} -t cg {output.vcf_gz} 1> {params.bed} 2> {log.vcf2bed}
+        bgzip -@ {threads} {params.bed} 2> {log.bed_gz}
         tabix -p bed {output.bed_gz} 2> {log.bed_tbi}
         """
 
@@ -184,7 +179,7 @@ rule biscuit_mergecg:
         mergecg_tbi = f'{output_directory}/analysis/pileup/{{sample}}_mergecg.bed.gz.tbi',
     params:
         mergecg = f'{output_directory}/analysis/pileup/{{sample}}_mergecg.bed',
-        nome = config['is_nome']
+        args_mergecg = config['biscuit']['args_mergecg'],
     log:
         mergecg = f'{output_directory}/logs/biscuit_pileup/mergecg.{{sample}}.log',
         mergecg_gz = f'{output_directory}/logs/biscuit_pileup/mergecg_gz.{{sample}}.log',
@@ -204,18 +199,14 @@ rule biscuit_mergecg:
         config['envmodules']['htslib'],
     shell:
         """
-        if [ {params.nome} == "True" ]; then
-            biscuit mergecg -N {input.ref} {input.bed} 1> {params.mergecg} 2> {log.mergecg}
-        else
-            biscuit mergecg {input.ref} {input.bed} 1> {params.mergecg} 2> {log.mergecg}
-        fi
+        biscuit mergecg {params.args_mergecg} {input.ref} {input.bed} 1> {params.mergecg} 2> {log.mergecg}
 
-        bgzip {params.mergecg} 2> {log.mergecg_gz}
+        bgzip -@ {threads} {params.mergecg} 2> {log.mergecg_gz}
         tabix -p bed {output.mergecg_gz} 2> {log.mergecg_tbi}
         """
 
 rule biscuit_snps:
-    input: 
+    input:
         bam = f'{output_directory}/analysis/align/{{sample}}.sorted.markdup.bam',
         vcf_gz = f'{output_directory}/analysis/pileup/{{sample}}.vcf.gz',
     output:
@@ -223,11 +214,12 @@ rule biscuit_snps:
         snp_bed_gz_tbi = f'{output_directory}/analysis/snps/{{sample}}.snp.bed.gz.tbi',
     params:
         snp_bed = f'{output_directory}/analysis/snps/{{sample}}.snp.bed',
+        args_vcf2bed_snp = config['biscuit']['args_vcf2bed_snp'],
     log:
         f'{output_directory}/logs/snps/snps.{{sample}}.log',
     benchmark:
         f'{output_directory}/benchmarks/biscuit_snps/{{sample}}.txt',
-    threads: 1
+    threads: 8
     resources:
         mem_gb = config['hpc_parameters']['intermediate_memory_gb'],
         time = config['runtime']['medium'],
@@ -238,13 +230,13 @@ rule biscuit_snps:
         config['envmodules']['htslib'],
     shell:
         """
-        biscuit vcf2bed -t snp {input.vcf_gz} > {params.snp_bed} 2> {log}
-        bgzip {params.snp_bed}
+        biscuit vcf2bed {params.args_vcf2bed_snp} -t snp {input.vcf_gz} > {params.snp_bed} 2> {log}
+        bgzip -@ {threads} {params.snp_bed}
         tabix -p bed {output.snp_bed_gz}
         """
 
 rule biscuit_epiread:
-    input: 
+    input:
         ref = get_biscuit_reference,
         bam = f'{output_directory}/analysis/align/{{sample}}.sorted.markdup.bam',
         snps = f'{output_directory}/analysis/snps/{{sample}}.snp.bed.gz',
@@ -254,7 +246,7 @@ rule biscuit_epiread:
         epibed_gz_tbi = f'{output_directory}/analysis/epiread/{{sample}}.epibed.gz.tbi',
     params:
         epibed = f'{output_directory}/analysis/epiread/{{sample}}.epibed',
-        nome = config['is_nome'],
+        args_epiread = config['biscuit']['args_epiread'],
     log:
         f'{output_directory}/logs/epiread/epiread.{{sample}}.log',
     benchmark:
@@ -270,20 +262,14 @@ rule biscuit_epiread:
         config['envmodules']['htslib'],
     shell:
         """
-        if [[ "$(zcat {input.snps} | head -n 1 | wc -l)" == "1" ]]; then
-            if [ {params.nome} == "True" ]; then
-                biscuit epiread -N -@ {threads} -B <(zcat {input.snps}) {input.ref} {input.bam} | sort -k1,1 -k2,2n > {params.epibed} 2> {log}
-            else
-                biscuit epiread -@ {threads} -B <(zcat {input.snps}) {input.ref} {input.bam} | sort -k1,1 -k2,2n > {params.epibed} 2> {log}
-            fi
-        else
-            if [ {params.nome} == "True" ]; then
-                biscuit epiread -N {input.ref} {input.bam} | sort -k1,1 -k2,2n > {params.epibed} 2> {log}
-            else
-                biscuit epiread {input.ref} {input.bam} | sort -k1,1 -k2,2n > {params.epibed} 2> {log}
-            fi
-        fi
+        biscuit epiread \
+            {params.args_epiread} \
+            -@ {threads} \
+            -B {input.snps} \
+            {input.ref} \
+            {input.bam} | \
+        sort -k1,1 -k2,2n > {params.epibed} 2> {log}
 
-        bgzip {params.epibed}
+        bgzip -@ {threads} {params.epibed}
         tabix -p bed {output.epibed_gz}
         """

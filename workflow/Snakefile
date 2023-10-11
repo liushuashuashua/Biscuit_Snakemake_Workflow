@@ -79,12 +79,12 @@ rule all:
         expand(
             f'{output_directory}/analysis/snps/{{samples.sample}}.snp.bed.gz',
             samples=SAMPLES.itertuples()
-        ) if config['generate_snps'] or config['epiread'] else [],
+        ) if config['biscuit']['extract_snps'] or config['biscuit']['make_epibeds'] else [],
         # biscuit epiread
         expand(
             f'{output_directory}/analysis/epiread/{{samples.sample}}.epibed.gz',
             samples=SAMPLES.itertuples()
-        ) if config['epiread'] else [],
+        ) if config['biscuit']['make_epibeds'] else [],
 
         ## Do post-processing QC
         # MultiQC
