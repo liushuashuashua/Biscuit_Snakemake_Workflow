@@ -113,7 +113,7 @@ FASTQ files in `bin/working_example_dataset` into `raw_data/` and use the defaul
 These example files can be mapped to the human genome.
 
 # Example default workflow - 1 sample
-![workflow diagram](bin/DAGs/dag.png)
+![workflow diagram](bin/DAGs/dag.pdf)
 
 # Helpful snakemake commands for debugging a workflow
 For more information on Snakemake: https://snakemake.readthedocs.io/en/stable/
