@@ -10,19 +10,21 @@ Download BISCUIT here: https://github.com/huishenlab/biscuit/releases/latest.
 The following components are generally in order, but may run in a different order, depending on exact dependencies
 needed.
   + [default off] Generate asset files used during QC related rules
-  + [default off] Modify and index genome reference to including methylation controls
+  + [default off] Modify and index reference genome to include methylation controls (lambda phage and pUC19)
   + [default off] Trim FASTQ files
   + [default off] Run Fastq Screen in bisulfite mode
   + Run FastQC on raw FASTQ files
-  + Alignment, duplicate tagging, indexing, flagstat of input data (biscuitBlaster v1 and v2)
+  + Alignment, duplicate marking, and indexing of input data (biscuitSifter pipeline)
+  + Samtools flagstat of input data
   + Methylation information extraction (BED Format)
   + Merge C and G beta values in CpG dinucleotide context
   + [default off] SNP and epiBED extraction
   + [default off] Run Preseq on aligned BAM
-  + MultiQC with BICUIT QC modules specifically for methyaltion data
+  + MultiQC with BICUIT QC modules specifically for methylation data
   + [default off] Generate plots of the observed / expected coverage ratio for different genomic features
   + [default off] Generate percentage of covered CpGs and CpG island coverage figures
   + [default off] Find coverage uniformity across genome
+  + [default off] Plot percentage of genome covered
   + [default off] Find average methylation values in bins across genome
   + [default off] Find average methylation values in bins centered on specified regions
   + [default off] QC methylated and unmethylated controls
@@ -33,29 +35,32 @@ to meet different needs.
 # Dependencies
 
 The following dependencies are downloaded when running with `--use-conda`, otherwise you must have these in your PATH.
-  + `snakemake` (version 7.0+)
-  + `biscuit` (version 1.0.1+)
-  + `htslib` (version 1.12+)
-  + `samtools` (version 1.12+)
-  + `samblaster`
-  + `parallel` (preferably version 20201122)
-  + `bedtools`
-  + `preseq` (version 3.1.2+, must be compiled with htslib enabled)
-  + `fastqc`
-  + `trim_galore`
-  + `fastq_screen` (only required if running `fastq_screen`)
-  + `bismark` (only required if running `fastq_screen`)
-  + `pigz`
-  + `python` (version 3.7+)
-    + `pandas`
-    + `numpy`
-    + `matplotlib`
-  + `multiqc`
-  + `R` (version 4.1.1+)
-    + `tidyverse` (only required for plotting methylation controls)
-    + `ggplot2` (only required for plotting methylation controls)
-    + `patchwork` (only required for plotting methylation controls)
-    + `viridislite` (only required for plotting methylation controls)
+| Package        | Conda Version Downloaded | Notes |
+|:---------------|:------------------------:|:------|
+| `snakemake`    | 7.0+                     | Needed before running pipeline |
+| `biscuit`      | 1.2.0                    |       |
+| `htslib`       | 1.17                     |       |
+| `samtools`     | 1.17                     |       |
+| `dupsifter`    | 1.2.0                    |       |
+| `parallel`     | 20230322                 |       |
+| `bedtools`     | 2.30.0                   |       |
+| `preseq`       | 3.2.0                    | Must be compiled with htslib enabled |
+| `fastqc`       | 0.12.1                   |       |
+| `trim_galore`  | 0.6.10                   |       |
+| `fastq_screen` | 0.15.3                   | Only required if running `fastq_screen`)
+| `bismark`      | 0.24.0                   | Only required if running `fastq_screen`)
+| `pigz`         | 2.6                      |       |
+| `python`       | 3.11.3                   |       |
+| `pandas`       | 2.0.0                    |       |
+| `numpy`        | 1.24.2                   |       |
+| `matplotlib`   | 3.7.1                    |       |
+| `seaborn`      | 0.12.2                   |       |
+| `multiqc`      | 1.14                     |       |
+| `R`            | 4.2.3                    |       |
+| `tidyverse`    | 2.0.0                    | Only required for plotting methylation controls |
+| `ggplot2`      | 3.4.2                    | Only required for plotting methylation controls |
+| `patchwork`    | 1.1.2                    | Only required for plotting methylation controls |
+| `viridislite`  | 0.4.1                    | Only required for plotting methylation controls |
 
 Two things of note, 1) it is easiest when working with `snakemake` to install `mamba` using `conda` when running with
 `--use-conda`, and 2) it is preferable to install `snakemake` using `conda`, rather than using a module. This is due to
@@ -63,9 +68,14 @@ potential conflicts between packages (such as `matplotlib`) that can be found in
 distrubtion and the conda installed python distribution.
 
 # Running the workflow
+For ease of reference, the configuration file `config/config.yaml` will be referred to throughout as the file to define
+any configuration needed for your pipeline run. That said, you can copy this config file to another file and use that
+config file in your pipeline with `snakemake --configfile /my/new/config.yaml` or by changing the `CONFIG_FILE` variable
+in the SLURM submit script.
+
 + Clone the repo (https://github.com/huishenlab/Biscuit_Snakemake_Workflow/tree/master).
-  + `git clone git@github.com:huishenlab/Biscuit_Snakemake_Workflow.git (SSH)`
-  + `git clone https://github.com/huishenlab/Biscuit_Snakemake_Workflow.git (HTTPS)`
+  + SSH: `git clone git@github.com:huishenlab/Biscuit_Snakemake_Workflow.git`
+  + HTTPS: `git clone https://github.com/huishenlab/Biscuit_Snakemake_Workflow.git`
 
 + Place *gzipped* FASTQ files into `raw_data/`. Alternatively, you can specify the location of your *gzipped* FASTQ
 files in `config/config.yaml`.
@@ -77,11 +87,11 @@ files in `config/config.yaml`.
     + B. `fq1` (name of R1 file for `sample` in your raw data directory)
     + C. `fq2` (name of R2 file for `sample` in your raw data directory)
     + D. Any other columns included are ignored
-Note, you can either edit `config/samples.tsv` in place or specify the path to your sample sheet in
-`config/config.yaml`. If you create your own sample sheet, make sure to include the header line as is seen in the
-example file.
+  + Note, you can either edit `config/samples.tsv` in place or specify the path to your sample sheet in
+  `config/config.yaml`. If you create your own sample sheet, make sure to include the header line as is seen in the
+  example file.
 
-+ Modify the config.yaml to specify the appropriate
++ Modify `config/config.yaml` to specify the appropriate
   + Reference genome
   + Biscuit index
   + Biscuit QC assets (https://github.com/huishenlab/biscuit/releases/latest)
@@ -93,10 +103,10 @@ example file.
   module is not available, snakemake gives a warning but will run successfully *as long as the required executables are
   in the path*.
 
-+ Modify slurm submit script with your slurm account and slurm partition.
++ Modify SLURM submit script as needed (new config file in `CONFIG_FILE`, etc.).
 
 + Then submit the workflow to an HPC using something similar to `bin/run_snakemake_workflow.slurm` (e.g.,
-`sbatch bin/run_snakemake_workflow.slurm`). `bin/run_snakemake_workflow.slurm` works for a Slurm queue
+`sbatch bin/run_snakemake_workflow.slurm`). `bin/run_snakemake_workflow.slurm` works for a SLURM queue
 system. A PBS/Torque version is available in a previous release on GitHub for those who need it.
 
 # After the workflow
