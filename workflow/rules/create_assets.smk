@@ -197,7 +197,7 @@ rule bismap_assets:
         f'{output_directory}/logs/bismap_assets.log',
     benchmark:
         f'{output_directory}/benchmarks/bismap_assets.txt',
-    threads: 1
+    threads: 8
     resources:
         mem_gb = config['hpc_parameters']['intermediate_memory_gb'],
         time = config['runtime']['medium']
@@ -209,22 +209,20 @@ rule bismap_assets:
         """
         set +o pipefail;
 
-        #cd {params.dir}
-
         wget -P {params.dir} --no-check-certificate -q https://bismap.hoffmanlab.org/raw/{params.gen}/k100.bismap.bedgraph.gz
 
         # Create average mappability scores in 10kb windows
-        zcat {output.bis} | sort -k1,1 -k2,2n | gzip > {output.sor}
+        zcat {output.bis} | sort --parallel={threads} -k1,1 -k2,2n -T {params.dir} | gzip > {output.sor}
 
         bedtools makewindows -w 10000 -g {input.ref}.fai | gzip 1> {output.byn} 2> {log}
-        bedtools map -a {output.byn} -b {output.sor} -c 4 -o mean | gzip 1> {output.wgt} 2> {log}
+        bedtools map -a {output.byn} -b {output.sor} -c 4 -o mean | gzip 1> {output.wgt} 2>> {log}
 
-        bedtools intersect -a {output.bis} -b {input.cpg} | gzip -c 1> {output.cpg} 2> {log}
-        bedtools intersect -a {output.bis} -b {input.cgi} | gzip -c 1> {output.cgi} 2> {log}
-        bedtools intersect -a {output.bis} -b {input.exn} | gzip -c 1> {output.exn} 2> {log}
-        bedtools intersect -a {output.bis} -b {input.gen} | gzip -c 1> {output.gen} 2> {log}
-        bedtools intersect -a {output.bis} -b {input.inr} | gzip -c 1> {output.inr} 2> {log}
-        bedtools intersect -a {output.bis} -b {input.msk} | gzip -c 1> {output.msk} 2> {log}
+        bedtools intersect -a {output.bis} -b {input.cpg} | gzip -c 1> {output.cpg} 2>> {log}
+        bedtools intersect -a {output.bis} -b {input.cgi} | gzip -c 1> {output.cgi} 2>> {log}
+        bedtools intersect -a {output.bis} -b {input.exn} | gzip -c 1> {output.exn} 2>> {log}
+        bedtools intersect -a {output.bis} -b {input.gen} | gzip -c 1> {output.gen} 2>> {log}
+        bedtools intersect -a {output.bis} -b {input.inr} | gzip -c 1> {output.inr} 2>> {log}
+        bedtools intersect -a {output.bis} -b {input.msk} | gzip -c 1> {output.msk} 2>> {log}
         """
 
 rule wcgw_assets:
