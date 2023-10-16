@@ -2,6 +2,7 @@ from matplotlib import pyplot as plt
 import seaborn as sns
 import pandas as pd
 import numpy as np
+import sys
 import os
 
 # Create list of chromosomes (include enough to cover human and mouse)
@@ -135,4 +136,6 @@ def create_plot(files, params, outfile):
     # Write data to output file
     df.to_csv(outfile['data'], index=False, sep='\t')
 
-create_plot(list(snakemake.input['files']), snakemake.params, snakemake.output)
+with open(snakemake.log[0], 'w') as fh:
+    sys.stderr = sys.stdout = fh
+    create_plot(list(snakemake.input['files']), snakemake.params, snakemake.output)

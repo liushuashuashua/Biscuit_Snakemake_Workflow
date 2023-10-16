@@ -32,7 +32,9 @@ rule covg_uniformity:
         set +o pipefail
         mkdir -p {params.outdir}
 
-        bedtools genomecov -bga -split -ibam {input.bam} | bedtools map -a {params.bins} -b - -c 4 | gzip > {output.uni}
+        bedtools genomecov -bga -split -ibam {input.bam} 2> {log} | \
+        bedtools map -a {params.bins} -b - -c 4 2>> {log} | \
+        gzip > {output.uni}
         """
 
 def get_covg_samples(wildcards):
