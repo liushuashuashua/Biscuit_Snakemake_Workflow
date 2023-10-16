@@ -1,5 +1,6 @@
 from matplotlib import pyplot as plt
 import pandas as pd
+import sys
 import os
 
 def create_plot(samples, outfiles):
@@ -66,4 +67,6 @@ def create_plot(samples, outfiles):
     plt.savefig(outfiles['cgi'], bbox_inches='tight')
     plt.close('all')
 
-create_plot(snakemake.input['files'], snakemake.output)
+with open(snakemake.log[0], 'w') as fh:
+    sys.stderr = sys.stdout = fh
+    create_plot(snakemake.input['files'], snakemake.output)

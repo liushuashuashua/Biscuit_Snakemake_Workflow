@@ -1,6 +1,7 @@
 from matplotlib import pyplot as plt
 import pandas as pd
 import numpy as np
+import sys
 import os
 
 TITLE = {
@@ -82,4 +83,6 @@ def create_plot(samples, outfiles):
         plt.savefig(outfiles[key], bbox_inches='tight')
         plt.close('all')
 
-create_plot(snakemake.input['files'], snakemake.output)
+with open(snakemake.log[0], 'w') as fh:
+    sys.stderr = sys.stdout = fh
+    create_plot(snakemake.input['files'], snakemake.output)

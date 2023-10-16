@@ -34,18 +34,18 @@ rule cpg_stats_genomecov:
         mkdir -p {params.outdir}
 
         # Unfiltered coverage
-        bedtools genomecov -bga -split -ibam {input.bam} | \
+        bedtools genomecov -bga -split -ibam {input.bam} 2> {log} | \
         LC_ALL=C sort --parallel={threads} -k1,1 -k2,2n -T {params.outdir} | \
-        bedtools intersect -a {params.cpg} -b - -wo -sorted | \
-        bedtools groupby -g 1-3 -c 7 -o min | \
+        bedtools intersect -a {params.cpg} -b - -wo -sorted 2>> {log} | \
+        bedtools groupby -g 1-3 -c 7 -o min 2>> {log} | \
         gzip -c > {output.unf}
 
         # MAPQ >= 40 filtered coverage
-        samtools view -q 40 -b {input.bam} | \
-        bedtools genomecov -bga -split -ibam stdin | \
+        samtools view -q 40 -b {input.bam} 2>> {log} | \
+        bedtools genomecov -bga -split -ibam stdin 2>> {log} | \
         LC_ALL=C sort --parallel={threads} -k1,1 -k2,2n -T {params.outdir} | \
-        bedtools intersect -a {params.cpg} -b - -wo -sorted | \
-        bedtools groupby -g 1-3 -c 7 -o min | \
+        bedtools intersect -a {params.cpg} -b - -wo -sorted 2>> {log} | \
+        bedtools groupby -g 1-3 -c 7 -o min 2>> {log} | \
         gzip -c > {output.fil}
         """
 
@@ -82,35 +82,35 @@ rule cpg_stats_feature_table:
         zcat {input.unf} | awk '$4>0{{ a += 1 }} END{{ printf("\\t%d\\n", a) }}' >> {output}
 
         # CpG Island CpGs
-        bedtools intersect -a {input.unf} -b <(bedtools merge -i {params.cgi}) -sorted | wc -l | \
+        bedtools intersect -a {input.unf} -b <(bedtools merge -i {params.cgi}) -sorted 2> {log} | wc -l | \
         awk '{{ printf("CGICpGs\\t%s", $1) }}' >> {output}
-        bedtools intersect -a {input.fil} -b <(bedtools merge -i {params.cgi}) -sorted | \
+        bedtools intersect -a {input.fil} -b <(bedtools merge -i {params.cgi}) -sorted 2>> {log} | \
         awk '$4>0{{ a += 1 }} END{{ printf("\\t%d", a) }}' >> {output}
-        bedtools intersect -a {input.unf} -b <(bedtools merge -i {params.cgi}) -sorted | \
+        bedtools intersect -a {input.unf} -b <(bedtools merge -i {params.cgi}) -sorted 2>> {log} | \
         awk '$4>0{{ a += 1 }} END{{ printf("\\t%d\\n", a) }}' >> {output}
 
         # Exonic CpGs
-        bedtools intersect -a {input.unf} -b <(bedtools merge -i {params.exn}) -sorted | wc -l | \
+        bedtools intersect -a {input.unf} -b <(bedtools merge -i {params.exn}) -sorted 2>> {log} | wc -l | \
         awk '{{ printf("ExonicCpGs\\t%s", $1) }}' >> {output}
-        bedtools intersect -a {input.fil} -b <(bedtools merge -i {params.exn}) -sorted | \
+        bedtools intersect -a {input.fil} -b <(bedtools merge -i {params.exn}) -sorted 2>> {log} | \
         awk '$4>0{{ a += 1 }} END{{ printf("\\t%d", a) }}' >> {output}
-        bedtools intersect -a {input.unf} -b <(bedtools merge -i {params.exn}) -sorted | \
+        bedtools intersect -a {input.unf} -b <(bedtools merge -i {params.exn}) -sorted 2>> {log} | \
         awk '$4>0{{ a += 1 }} END{{ printf("\\t%d\\n", a) }}' >> {output}
 
         # Genic CpGs
-        bedtools intersect -a {input.unf} -b <(bedtools merge -i {params.gen}) -sorted | wc -l | \
+        bedtools intersect -a {input.unf} -b <(bedtools merge -i {params.gen}) -sorted 2>> {log} | wc -l | \
         awk '{{ printf("GenicCpGs\\t%s", $1) }}' >> {output}
-        bedtools intersect -a {input.fil} -b <(bedtools merge -i {params.gen}) -sorted | \
+        bedtools intersect -a {input.fil} -b <(bedtools merge -i {params.gen}) -sorted 2>> {log} | \
         awk '$4>0{{ a += 1 }} END{{ printf("\\t%d", a) }}' >> {output}
-        bedtools intersect -a {input.unf} -b <(bedtools merge -i {params.gen}) -sorted | \
+        bedtools intersect -a {input.unf} -b <(bedtools merge -i {params.gen}) -sorted 2>> {log} | \
         awk '$4>0{{ a += 1 }} END{{ printf("\\t%d\\n", a) }}' >> {output}
 
         # Repeat-masked CpGs
-        bedtools intersect -a {input.unf} -b <(bedtools merge -i {params.msk}) -sorted | wc -l | \
+        bedtools intersect -a {input.unf} -b <(bedtools merge -i {params.msk}) -sorted 2>> {log} | wc -l | \
         awk '{{ printf("RepeatCpGs\\t%s", $1) }}' >> {output}
-        bedtools intersect -a {input.fil} -b <(bedtools merge -i {params.msk}) -sorted | \
+        bedtools intersect -a {input.fil} -b <(bedtools merge -i {params.msk}) -sorted 2>> {log} | \
         awk '$4>0{{ a += 1 }} END{{ printf("\\t%d", a) }}' >> {output}
-        bedtools intersect -a {input.unf} -b <(bedtools merge -i {params.msk}) -sorted | \
+        bedtools intersect -a {input.unf} -b <(bedtools merge -i {params.msk}) -sorted 2>> {log} | \
         awk '$4>0{{ a += 1 }} END{{ printf("\\t%d\\n", a) }}' >> {output}
         """
 
@@ -140,7 +140,7 @@ rule cpg_stats_cgi_table:
         zcat {params.cgi} | wc -l | awk '{{ printf("n_cpg_islands\\t%s\\n", $1) }}' > {output}
 
         # Number of CpG islands with at least one read with MAPQ>=40 covering 1+, 3+, 5+, and 7+ CpGs in that CpG island
-        bedtools intersect -a {input.fil} -b <(bedtools merge -i {params.cgi}) -sorted -wo | \
+        bedtools intersect -a {input.fil} -b <(bedtools merge -i {params.cgi}) -sorted -wo 2> {log} | \
         awk '$4>0 {{ print $5":"$6"-"$7 }}' | uniq -c | \
         awk '{{ if ($1 >= 1) {{ a += 1; }} if ($1 >= 3) {{ b += 1; }} if ($1 >= 5) {{ c += 1; }} if ($1 >= 7) {{ d += 1; }} }} END {{ printf("%d %d %d %d", a, b, c, d) }}' | \
         awk '{{ printf("one_cpg\\t%s\\nthree_cpgs\\t%s\\nfive_cpgs\\t%s\\nseven_cpgs\\t%s\\n", $1, $2, $3, $4) }}' >> {output}
