@@ -10,6 +10,8 @@ mkdir -p logs/workflows
 
 cd ${SLURM_SUBMIT_DIR}
 
+CONFIG_FILE=config/config.yaml
+
 # Add snakemake to PATH here
 if [[ `which snakemake 2>&1 /dev/null` ]]; then
     snakemake_module="bbc2/snakemake/snakemake-7.25.0"
@@ -19,8 +21,8 @@ fi
 
 # save DAG job file with time stamp
 TIME=$(date "+%Y-%m-%d_%H.%M.%S")
-snakemake --configfile config/config.yaml --dry-run         > logs/workflows/workflow_${TIME}.txt
-snakemake --configfile config/config.yaml --dag | dot -Tpng > logs/workflows/workflow_${TIME}.png
+snakemake --configfile ${CONFIG_FILE} --dry-run         > logs/workflows/workflow_${TIME}.txt
+snakemake --configfile ${CONFIG_FILE} --dag | dot -Tpng > logs/workflows/workflow_${TIME}.png
 
 # Default to using conda, if using environment modules, then replace --use-conda with --use-envmodules
 # Note, this requires downloading mamba (conda install -n base -c conda-forge mamba)
@@ -30,7 +32,7 @@ snakemake \
     --keep-going \
     --use-conda \
     --jobs 20 \
-    --configfile config/config.yaml \
+    --configfile ${CONFIG_FILE} \
     --cluster "mkdir -p logs/{rule}; sbatch \
         --export=ALL \
         --ntasks {threads} \
