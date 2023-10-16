@@ -33,8 +33,8 @@ rule obs_exp_coverage_genomecov:
         mkdir -p {params.outdir}
 
         # Find genomic coverage
-        samtools view -hb -F 0x4 -q 40 {input.bam} | \
-        bedtools genomecov -bg -ibam stdin | \
+        samtools view -hb -F 0x4 -q 40 {input.bam} 2> {log} | \
+        bedtools genomecov -bg -ibam stdin 2>> {log} | \
         gzip -c > {output.cov}
         """
 
@@ -62,7 +62,7 @@ rule obs_exp_coverage_genomecov_cpg:
         set +o pipefail
 
         # Find intersections
-        bedtools intersect -a {params.cpg} -b {input.cov} -wo | gzip -c > {output.cpg}
+        bedtools intersect -a {params.cpg} -b {input.cov} -wo 2> {log} | gzip -c > {output.cpg}
         """
 
 rule obs_exp_coverage_genomecov_cgi:
@@ -89,7 +89,7 @@ rule obs_exp_coverage_genomecov_cgi:
         set +o pipefail
 
         # Find intersections
-        bedtools intersect -a {params.cgi} -b {input.cov} -wo | gzip -c > {output.cgi}
+        bedtools intersect -a {params.cgi} -b {input.cov} -wo 2> {log} | gzip -c > {output.cgi}
         """
 
 rule obs_exp_coverage_genomecov_intergenic:
@@ -116,7 +116,7 @@ rule obs_exp_coverage_genomecov_intergenic:
         set +o pipefail
 
         # Find intersections
-        bedtools intersect -a {params.intergenic} -b {input.cov} -wo | gzip -c > {output.intergenic}
+        bedtools intersect -a {params.intergenic} -b {input.cov} -wo 2> {log} | gzip -c > {output.intergenic}
         """
 
 rule obs_exp_coverage_genomecov_exon:
@@ -143,7 +143,7 @@ rule obs_exp_coverage_genomecov_exon:
         set +o pipefail
 
         # Find intersections
-        bedtools intersect -a {params.exon} -b {input.cov} -wo | gzip -c > {output.exon}
+        bedtools intersect -a {params.exon} -b {input.cov} -wo 2> {log} | gzip -c > {output.exon}
         """
 
 rule obs_exp_coverage_genomecov_genic:
@@ -170,7 +170,7 @@ rule obs_exp_coverage_genomecov_genic:
         set +o pipefail
 
         # Find intersections
-        bedtools intersect -a {params.genic} -b {input.cov} -wo | gzip -c > {output.genic}
+        bedtools intersect -a {params.genic} -b {input.cov} -wo 2> {log} | gzip -c > {output.genic}
         """
 
 rule obs_exp_coverage_genomecov_rmsk:
@@ -197,7 +197,7 @@ rule obs_exp_coverage_genomecov_rmsk:
         set +o pipefail
 
         # Find intersections
-        bedtools intersect -a {params.rmsk} -b {input.cov} -wo | gzip -c > {output.rmsk}
+        bedtools intersect -a {params.rmsk} -b {input.cov} -wo 2> {log} | gzip -c > {output.rmsk}
         """
 
 rule obs_exp_coverage_genomecov_mapped:
@@ -224,7 +224,7 @@ rule obs_exp_coverage_genomecov_mapped:
         set +o pipefail
 
         # Find intersections
-        bedtools intersect -a {params.mapped} -b {input.cov} -wo | gzip -c > {output.mapped}
+        bedtools intersect -a {params.mapped} -b {input.cov} -wo 2> {log} | gzip -c > {output.mapped}
         """
 
 rule obs_exp_coverage_values:

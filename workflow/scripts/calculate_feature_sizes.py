@@ -1,4 +1,5 @@
 import pandas as pd
+import sys
 
 DEFAULT_2 = {'cov': [0], 'ol': [0]}
 DEFAULT_3 = {'start': [0], 'end': [0], 'weight': [0]}
@@ -104,9 +105,11 @@ def calculate_feature_sizes(samp, infiles, paramfiles, outfile):
             )
         )
 
-calculate_feature_sizes(
-    snakemake.wildcards['sample'],
-    snakemake.input,
-    snakemake.params,
-    snakemake.output['data']
-)
+with open(snakemake.log[0], 'w') as fh:
+    sys.stderr = sys.stdout = fh
+    calculate_feature_sizes(
+        snakemake.wildcards['sample'],
+        snakemake.input,
+        snakemake.params,
+        snakemake.output['data']
+    )
