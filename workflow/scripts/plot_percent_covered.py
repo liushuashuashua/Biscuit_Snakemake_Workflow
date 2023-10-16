@@ -1,4 +1,5 @@
 from matplotlib import pyplot as plt
+import sys
 import os
 
 def create_plot(data, outfile):
@@ -63,4 +64,6 @@ def create_plot(data, outfile):
     plt.savefig(outfile['out'], bbox_inches='tight')
     plt.close('all')
 
-create_plot(snakemake.input, snakemake.output)
+with open(snakemake.log[0], 'w') as fh:
+    sys.stderr = sys.stdout = fh
+    create_plot(snakemake.input, snakemake.output)
