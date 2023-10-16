@@ -3,11 +3,11 @@ digraph snakemake_dag {
     node[shape=box, style=rounded, fontname=sans,                 fontsize=10, penwidth=2];
     edge[penwidth=2, color=grey];
 	0[label = < <B>all</B> >, color = black, style="rounded"];
-	1[label = < <B>build_ref_with_methylation_controls</B> >, color = black, style="rounded,dashed"];
-	2[label = < <B>bismap_assets</B> >, color = black, style="rounded,dashed"];
-	3[label = < <B>general_assets</B> >, color = black, style="rounded,dashed"];
-	4[label = < <B>biscuit_mergecg</B> >, color = red, style="rounded"];
-	5[label = < <B>biscuit_pileup</B> >, color = red, style="rounded"];
+	1[label = < <B>build_ref_with_methylation_controls</B> >, color = black, style="rounded"];
+	2[label = < <B>rename_fastq_files</B> >, color = black, style="rounded"];
+	3[label = < <B>bismap_assets</B> >, color = black, style="rounded"];
+	4[label = < <B>general_assets</B> >, color = black, style="rounded"];
+	5[label = < <B>wcgw_assets</B> >, color = black, style="rounded"];
 	6[label = < <B>biscuit_mergecg</B> >, color = red, style="rounded"];
 	7[label = < <B>biscuit_pileup</B> >, color = red, style="rounded"];
 	8[label = < <B>biscuit_mergecg</B> >, color = red, style="rounded"];
@@ -16,126 +16,149 @@ digraph snakemake_dag {
 	11[label = < <B>biscuit_pileup</B> >, color = red, style="rounded"];
 	12[label = < <B>biscuit_mergecg</B> >, color = red, style="rounded"];
 	13[label = < <B>biscuit_pileup</B> >, color = red, style="rounded"];
-	14[label = < <B>biscuit_snps</B> >, color = red, style="rounded,dashed"];
-	15[label = < <B>biscuit_snps</B> >, color = red, style="rounded,dashed"];
-	16[label = < <B>biscuit_snps</B> >, color = red, style="rounded,dashed"];
-	17[label = < <B>biscuit_snps</B> >, color = red, style="rounded,dashed"];
-	18[label = < <B>biscuit_snps</B> >, color = red, style="rounded,dashed"];
-	19[label = < <B>biscuit_epiread</B> >, color = red, style="rounded,dashed"];
-	20[label = < <B>biscuit_epiread</B> >, color = red, style="rounded,dashed"];
-	21[label = < <B>biscuit_epiread</B> >, color = red, style="rounded,dashed"];
-	22[label = < <B>biscuit_epiread</B> >, color = red, style="rounded,dashed"];
-	23[label = < <B>biscuit_epiread</B> >, color = red, style="rounded,dashed"];
-	24[label = < <B>multiQC</B> >, color = black, style="rounded"];
-	25[label = < <B>biscuit_qc</B> >, color = red, style="rounded"];
-	26[label = < <B>biscuit_qc</B> >, color = red, style="rounded"];
-	27[label = < <B>biscuit_qc</B> >, color = red, style="rounded"];
-	28[label = < <B>biscuit_qc</B> >, color = red, style="rounded"];
-	29[label = < <B>biscuit_qc</B> >, color = red, style="rounded"];
-	30[label = < <B>preseq</B> >, color = black, style="rounded,dashed"];
-	31[label = < <B>preseq</B> >, color = black, style="rounded,dashed"];
-	32[label = < <B>preseq</B> >, color = black, style="rounded,dashed"];
-	33[label = < <B>preseq</B> >, color = black, style="rounded,dashed"];
-	34[label = < <B>preseq</B> >, color = black, style="rounded,dashed"];
-	35[label = < <B>percent_covered</B> >, color = black, style="rounded"];
-	36[label = < <B>obs_exp_coverage_plot</B> >, color = black, style="rounded,dashed"];
-	37[label = < <B>obs_exp_coverage_values</B> >, color = black, style="rounded,dashed"];
-	38[label = < <B>obs_exp_coverage_genomecov_cpg</B> >, color = black, style="rounded,dashed"];
-	39[label = < <B>obs_exp_coverage_genomecov</B> >, color = black, style="rounded,dashed"];
-	40[label = < <B>obs_exp_coverage_genomecov_cgi</B> >, color = black, style="rounded,dashed"];
-	41[label = < <B>obs_exp_coverage_genomecov_exon</B> >, color = black, style="rounded,dashed"];
-	42[label = < <B>obs_exp_coverage_genomecov_genic</B> >, color = black, style="rounded,dashed"];
-	43[label = < <B>obs_exp_coverage_genomecov_intergenic</B> >, color = black, style="rounded,dashed"];
-	44[label = < <B>obs_exp_coverage_genomecov_rmsk</B> >, color = black, style="rounded,dashed"];
-	45[label = < <B>obs_exp_coverage_genomecov_mapped</B> >, color = black, style="rounded,dashed"];
-	46[label = < <B>obs_exp_coverage_values</B> >, color = black, style="rounded,dashed"];
-	47[label = < <B>obs_exp_coverage_genomecov_cpg</B> >, color = black, style="rounded,dashed"];
-	48[label = < <B>obs_exp_coverage_genomecov</B> >, color = black, style="rounded,dashed"];
-	49[label = < <B>obs_exp_coverage_genomecov_cgi</B> >, color = black, style="rounded,dashed"];
-	50[label = < <B>obs_exp_coverage_genomecov_exon</B> >, color = black, style="rounded,dashed"];
-	51[label = < <B>obs_exp_coverage_genomecov_genic</B> >, color = black, style="rounded,dashed"];
-	52[label = < <B>obs_exp_coverage_genomecov_intergenic</B> >, color = black, style="rounded,dashed"];
-	53[label = < <B>obs_exp_coverage_genomecov_rmsk</B> >, color = black, style="rounded,dashed"];
-	54[label = < <B>obs_exp_coverage_genomecov_mapped</B> >, color = black, style="rounded,dashed"];
-	55[label = < <B>obs_exp_coverage_values</B> >, color = black, style="rounded,dashed"];
-	56[label = < <B>obs_exp_coverage_genomecov_cpg</B> >, color = black, style="rounded,dashed"];
-	57[label = < <B>obs_exp_coverage_genomecov</B> >, color = black, style="rounded,dashed"];
-	58[label = < <B>obs_exp_coverage_genomecov_cgi</B> >, color = black, style="rounded,dashed"];
-	59[label = < <B>obs_exp_coverage_genomecov_exon</B> >, color = black, style="rounded,dashed"];
-	60[label = < <B>obs_exp_coverage_genomecov_genic</B> >, color = black, style="rounded,dashed"];
-	61[label = < <B>obs_exp_coverage_genomecov_intergenic</B> >, color = black, style="rounded,dashed"];
-	62[label = < <B>obs_exp_coverage_genomecov_rmsk</B> >, color = black, style="rounded,dashed"];
-	63[label = < <B>obs_exp_coverage_genomecov_mapped</B> >, color = black, style="rounded,dashed"];
-	64[label = < <B>obs_exp_coverage_values</B> >, color = black, style="rounded,dashed"];
-	65[label = < <B>obs_exp_coverage_genomecov_cpg</B> >, color = black, style="rounded,dashed"];
-	66[label = < <B>obs_exp_coverage_genomecov</B> >, color = black, style="rounded,dashed"];
-	67[label = < <B>obs_exp_coverage_genomecov_cgi</B> >, color = black, style="rounded,dashed"];
-	68[label = < <B>obs_exp_coverage_genomecov_exon</B> >, color = black, style="rounded,dashed"];
-	69[label = < <B>obs_exp_coverage_genomecov_genic</B> >, color = black, style="rounded,dashed"];
-	70[label = < <B>obs_exp_coverage_genomecov_intergenic</B> >, color = black, style="rounded,dashed"];
-	71[label = < <B>obs_exp_coverage_genomecov_rmsk</B> >, color = black, style="rounded,dashed"];
-	72[label = < <B>obs_exp_coverage_genomecov_mapped</B> >, color = black, style="rounded,dashed"];
-	73[label = < <B>obs_exp_coverage_values</B> >, color = black, style="rounded,dashed"];
-	74[label = < <B>obs_exp_coverage_genomecov_cpg</B> >, color = black, style="rounded,dashed"];
-	75[label = < <B>obs_exp_coverage_genomecov</B> >, color = black, style="rounded,dashed"];
-	76[label = < <B>obs_exp_coverage_genomecov_cgi</B> >, color = black, style="rounded,dashed"];
-	77[label = < <B>obs_exp_coverage_genomecov_exon</B> >, color = black, style="rounded,dashed"];
-	78[label = < <B>obs_exp_coverage_genomecov_genic</B> >, color = black, style="rounded,dashed"];
-	79[label = < <B>obs_exp_coverage_genomecov_intergenic</B> >, color = black, style="rounded,dashed"];
-	80[label = < <B>obs_exp_coverage_genomecov_rmsk</B> >, color = black, style="rounded,dashed"];
-	81[label = < <B>obs_exp_coverage_genomecov_mapped</B> >, color = black, style="rounded,dashed"];
-	82[label = < <B>cpg_stats_feature_plot</B> >, color = black, style="rounded,dashed"];
-	83[label = < <B>cpg_stats_feature_table</B> >, color = black, style="rounded,dashed"];
-	84[label = < <B>cpg_stats_genomecov</B> >, color = black, style="rounded,dashed"];
-	85[label = < <B>cpg_stats_feature_table</B> >, color = black, style="rounded,dashed"];
-	86[label = < <B>cpg_stats_genomecov</B> >, color = black, style="rounded,dashed"];
-	87[label = < <B>cpg_stats_feature_table</B> >, color = black, style="rounded,dashed"];
-	88[label = < <B>cpg_stats_genomecov</B> >, color = black, style="rounded,dashed"];
-	89[label = < <B>cpg_stats_feature_table</B> >, color = black, style="rounded,dashed"];
-	90[label = < <B>cpg_stats_genomecov</B> >, color = black, style="rounded,dashed"];
-	91[label = < <B>cpg_stats_feature_table</B> >, color = black, style="rounded,dashed"];
-	92[label = < <B>cpg_stats_genomecov</B> >, color = black, style="rounded,dashed"];
-	93[label = < <B>cpg_stats_cgi_plot</B> >, color = black, style="rounded,dashed"];
-	94[label = < <B>cpg_stats_cgi_table</B> >, color = black, style="rounded,dashed"];
-	95[label = < <B>cpg_stats_cgi_table</B> >, color = black, style="rounded,dashed"];
-	96[label = < <B>cpg_stats_cgi_table</B> >, color = black, style="rounded,dashed"];
-	97[label = < <B>cpg_stats_cgi_table</B> >, color = black, style="rounded,dashed"];
-	98[label = < <B>cpg_stats_cgi_table</B> >, color = black, style="rounded,dashed"];
-	99[label = < <B>methylation_controls_qc</B> >, color = black, style="rounded,dashed"];
-	100[label = < <B>methylation_controls_qc</B> >, color = black, style="rounded,dashed"];
-	101[label = < <B>methylation_controls_qc</B> >, color = black, style="rounded,dashed"];
-	102[label = < <B>methylation_controls_qc</B> >, color = black, style="rounded,dashed"];
-	103[label = < <B>methylation_controls_qc</B> >, color = black, style="rounded,dashed"];
-	104[label = < <B>methylation_controls_figure</B> >, color = black, style="rounded,dashed"];
-	105[label = < <B>raw_fastqc</B><br />sample: sample_1 >, color = black, style="rounded"];
-	106[label = < <B>raw_fastqc</B><br />sample: sample_2 >, color = black, style="rounded"];
-	107[label = < <B>raw_fastqc</B><br />sample: sample_3 >, color = black, style="rounded"];
-	108[label = < <B>raw_fastqc</B><br />sample: sample_4 >, color = black, style="rounded"];
-	109[label = < <B>raw_fastqc</B><br />sample: sample_5 >, color = black, style="rounded"];
-	110[label = < <B>fastq_screen</B><br />sample: sample_1 >, color = black, style="rounded,dashed"];
-	111[label = < <B>fastq_screen</B><br />sample: sample_2 >, color = black, style="rounded,dashed"];
-	112[label = < <B>fastq_screen</B><br />sample: sample_3 >, color = black, style="rounded,dashed"];
-	113[label = < <B>fastq_screen</B><br />sample: sample_4 >, color = black, style="rounded,dashed"];
-	114[label = < <B>fastq_screen</B><br />sample: sample_5 >, color = black, style="rounded,dashed"];
-	115[label = < <B>biscuit_blaster</B> >, color = red, style="rounded"];
-	116[label = < <B>biscuit_blaster</B> >, color = red, style="rounded"];
-	117[label = < <B>biscuit_blaster</B> >, color = red, style="rounded"];
-	118[label = < <B>biscuit_blaster</B> >, color = red, style="rounded"];
-	119[label = < <B>biscuit_blaster</B> >, color = red, style="rounded"];
-	120[label = < <B>trim_reads</B><br />sample: sample_1 >, color = black, style="rounded,dashed"];
-	121[label = < <B>trim_reads</B><br />sample: sample_2 >, color = black, style="rounded,dashed"];
-	122[label = < <B>trim_reads</B><br />sample: sample_3 >, color = black, style="rounded,dashed"];
-	123[label = < <B>trim_reads</B><br />sample: sample_4 >, color = black, style="rounded,dashed"];
-	124[label = < <B>trim_reads</B><br />sample: sample_5 >, color = black, style="rounded,dashed"];
+	14[label = < <B>biscuit_mergecg</B> >, color = red, style="rounded"];
+	15[label = < <B>biscuit_pileup</B> >, color = red, style="rounded"];
+	16[label = < <B>biscuit_snps</B> >, color = red, style="rounded"];
+	17[label = < <B>biscuit_snps</B> >, color = red, style="rounded"];
+	18[label = < <B>biscuit_snps</B> >, color = red, style="rounded"];
+	19[label = < <B>biscuit_snps</B> >, color = red, style="rounded"];
+	20[label = < <B>biscuit_snps</B> >, color = red, style="rounded"];
+	21[label = < <B>biscuit_epiread</B> >, color = red, style="rounded"];
+	22[label = < <B>biscuit_epiread</B> >, color = red, style="rounded"];
+	23[label = < <B>biscuit_epiread</B> >, color = red, style="rounded"];
+	24[label = < <B>biscuit_epiread</B> >, color = red, style="rounded"];
+	25[label = < <B>biscuit_epiread</B> >, color = red, style="rounded"];
+	26[label = < <B>multiQC</B> >, color = black, style="rounded"];
+	27[label = < <B>samtools_flagstat</B> >, color = black, style="rounded"];
+	28[label = < <B>samtools_flagstat</B> >, color = black, style="rounded"];
+	29[label = < <B>samtools_flagstat</B> >, color = black, style="rounded"];
+	30[label = < <B>samtools_flagstat</B> >, color = black, style="rounded"];
+	31[label = < <B>samtools_flagstat</B> >, color = black, style="rounded"];
+	32[label = < <B>biscuit_qc</B> >, color = red, style="rounded"];
+	33[label = < <B>biscuit_qc</B> >, color = red, style="rounded"];
+	34[label = < <B>biscuit_qc</B> >, color = red, style="rounded"];
+	35[label = < <B>biscuit_qc</B> >, color = red, style="rounded"];
+	36[label = < <B>biscuit_qc</B> >, color = red, style="rounded"];
+	37[label = < <B>preseq</B> >, color = black, style="rounded"];
+	38[label = < <B>preseq</B> >, color = black, style="rounded"];
+	39[label = < <B>preseq</B> >, color = black, style="rounded"];
+	40[label = < <B>preseq</B> >, color = black, style="rounded"];
+	41[label = < <B>preseq</B> >, color = black, style="rounded"];
+	42[label = < <B>percent_covered</B> >, color = black, style="rounded"];
+	43[label = < <B>obs_exp_coverage_plot</B> >, color = black, style="rounded"];
+	44[label = < <B>obs_exp_coverage_values</B> >, color = black, style="rounded"];
+	45[label = < <B>obs_exp_coverage_genomecov_cpg</B> >, color = black, style="rounded"];
+	46[label = < <B>obs_exp_coverage_genomecov</B> >, color = black, style="rounded"];
+	47[label = < <B>obs_exp_coverage_genomecov_cgi</B> >, color = black, style="rounded"];
+	48[label = < <B>obs_exp_coverage_genomecov_exon</B> >, color = black, style="rounded"];
+	49[label = < <B>obs_exp_coverage_genomecov_genic</B> >, color = black, style="rounded"];
+	50[label = < <B>obs_exp_coverage_genomecov_intergenic</B> >, color = black, style="rounded"];
+	51[label = < <B>obs_exp_coverage_genomecov_rmsk</B> >, color = black, style="rounded"];
+	52[label = < <B>obs_exp_coverage_genomecov_mapped</B> >, color = black, style="rounded"];
+	53[label = < <B>obs_exp_coverage_values</B> >, color = black, style="rounded"];
+	54[label = < <B>obs_exp_coverage_genomecov_cpg</B> >, color = black, style="rounded"];
+	55[label = < <B>obs_exp_coverage_genomecov</B> >, color = black, style="rounded"];
+	56[label = < <B>obs_exp_coverage_genomecov_cgi</B> >, color = black, style="rounded"];
+	57[label = < <B>obs_exp_coverage_genomecov_exon</B> >, color = black, style="rounded"];
+	58[label = < <B>obs_exp_coverage_genomecov_genic</B> >, color = black, style="rounded"];
+	59[label = < <B>obs_exp_coverage_genomecov_intergenic</B> >, color = black, style="rounded"];
+	60[label = < <B>obs_exp_coverage_genomecov_rmsk</B> >, color = black, style="rounded"];
+	61[label = < <B>obs_exp_coverage_genomecov_mapped</B> >, color = black, style="rounded"];
+	62[label = < <B>obs_exp_coverage_values</B> >, color = black, style="rounded"];
+	63[label = < <B>obs_exp_coverage_genomecov_cpg</B> >, color = black, style="rounded"];
+	64[label = < <B>obs_exp_coverage_genomecov</B> >, color = black, style="rounded"];
+	65[label = < <B>obs_exp_coverage_genomecov_cgi</B> >, color = black, style="rounded"];
+	66[label = < <B>obs_exp_coverage_genomecov_exon</B> >, color = black, style="rounded"];
+	67[label = < <B>obs_exp_coverage_genomecov_genic</B> >, color = black, style="rounded"];
+	68[label = < <B>obs_exp_coverage_genomecov_intergenic</B> >, color = black, style="rounded"];
+	69[label = < <B>obs_exp_coverage_genomecov_rmsk</B> >, color = black, style="rounded"];
+	70[label = < <B>obs_exp_coverage_genomecov_mapped</B> >, color = black, style="rounded"];
+	71[label = < <B>obs_exp_coverage_values</B> >, color = black, style="rounded"];
+	72[label = < <B>obs_exp_coverage_genomecov_cpg</B> >, color = black, style="rounded"];
+	73[label = < <B>obs_exp_coverage_genomecov</B> >, color = black, style="rounded"];
+	74[label = < <B>obs_exp_coverage_genomecov_cgi</B> >, color = black, style="rounded"];
+	75[label = < <B>obs_exp_coverage_genomecov_exon</B> >, color = black, style="rounded"];
+	76[label = < <B>obs_exp_coverage_genomecov_genic</B> >, color = black, style="rounded"];
+	77[label = < <B>obs_exp_coverage_genomecov_intergenic</B> >, color = black, style="rounded"];
+	78[label = < <B>obs_exp_coverage_genomecov_rmsk</B> >, color = black, style="rounded"];
+	79[label = < <B>obs_exp_coverage_genomecov_mapped</B> >, color = black, style="rounded"];
+	80[label = < <B>obs_exp_coverage_values</B> >, color = black, style="rounded"];
+	81[label = < <B>obs_exp_coverage_genomecov_cpg</B> >, color = black, style="rounded"];
+	82[label = < <B>obs_exp_coverage_genomecov</B> >, color = black, style="rounded"];
+	83[label = < <B>obs_exp_coverage_genomecov_cgi</B> >, color = black, style="rounded"];
+	84[label = < <B>obs_exp_coverage_genomecov_exon</B> >, color = black, style="rounded"];
+	85[label = < <B>obs_exp_coverage_genomecov_genic</B> >, color = black, style="rounded"];
+	86[label = < <B>obs_exp_coverage_genomecov_intergenic</B> >, color = black, style="rounded"];
+	87[label = < <B>obs_exp_coverage_genomecov_rmsk</B> >, color = black, style="rounded"];
+	88[label = < <B>obs_exp_coverage_genomecov_mapped</B> >, color = black, style="rounded"];
+	89[label = < <B>cpg_stats_feature_plot</B> >, color = black, style="rounded"];
+	90[label = < <B>cpg_stats_feature_table</B> >, color = black, style="rounded"];
+	91[label = < <B>cpg_stats_genomecov</B> >, color = black, style="rounded"];
+	92[label = < <B>cpg_stats_feature_table</B> >, color = black, style="rounded"];
+	93[label = < <B>cpg_stats_genomecov</B> >, color = black, style="rounded"];
+	94[label = < <B>cpg_stats_feature_table</B> >, color = black, style="rounded"];
+	95[label = < <B>cpg_stats_genomecov</B> >, color = black, style="rounded"];
+	96[label = < <B>cpg_stats_feature_table</B> >, color = black, style="rounded"];
+	97[label = < <B>cpg_stats_genomecov</B> >, color = black, style="rounded"];
+	98[label = < <B>cpg_stats_feature_table</B> >, color = black, style="rounded"];
+	99[label = < <B>cpg_stats_genomecov</B> >, color = black, style="rounded"];
+	100[label = < <B>cpg_stats_cgi_plot</B> >, color = black, style="rounded"];
+	101[label = < <B>cpg_stats_cgi_table</B> >, color = black, style="rounded"];
+	102[label = < <B>cpg_stats_cgi_table</B> >, color = black, style="rounded"];
+	103[label = < <B>cpg_stats_cgi_table</B> >, color = black, style="rounded"];
+	104[label = < <B>cpg_stats_cgi_table</B> >, color = black, style="rounded"];
+	105[label = < <B>cpg_stats_cgi_table</B> >, color = black, style="rounded"];
+	106[label = < <B>covg_uniformity</B> >, color = black, style="rounded"];
+	107[label = < <B>covg_uniformity</B> >, color = black, style="rounded"];
+	108[label = < <B>covg_uniformity</B> >, color = black, style="rounded"];
+	109[label = < <B>covg_uniformity</B> >, color = black, style="rounded"];
+	110[label = < <B>covg_uniformity</B> >, color = black, style="rounded"];
+	111[label = < <B>uniformity_plot</B> >, color = black, style="rounded"];
+	112[label = < <B>methylation_controls_qc</B> >, color = black, style="rounded"];
+	113[label = < <B>methylation_controls_qc</B> >, color = black, style="rounded"];
+	114[label = < <B>methylation_controls_qc</B> >, color = black, style="rounded"];
+	115[label = < <B>methylation_controls_qc</B> >, color = black, style="rounded"];
+	116[label = < <B>methylation_controls_qc</B> >, color = black, style="rounded"];
+	117[label = < <B>methylation_controls_figure</B> >, color = black, style="rounded"];
+	118[label = < <B>binned_averages</B> >, color = black, style="rounded"];
+	119[label = < <B>binned_averages</B> >, color = black, style="rounded"];
+	120[label = < <B>binned_averages</B> >, color = black, style="rounded"];
+	121[label = < <B>binned_averages</B> >, color = black, style="rounded"];
+	122[label = < <B>binned_averages</B> >, color = black, style="rounded"];
+	123[label = < <B>region_centered_bin_averages</B> >, color = black, style="rounded"];
+	124[label = < <B>get_regions_for_centered_bin_averages_from_bed</B> >, color = black, style="rounded"];
+	125[label = < <B>region_centered_bin_averages</B> >, color = black, style="rounded"];
+	126[label = < <B>region_centered_bin_averages</B> >, color = black, style="rounded"];
+	127[label = < <B>region_centered_bin_averages</B> >, color = black, style="rounded"];
+	128[label = < <B>region_centered_bin_averages</B> >, color = black, style="rounded"];
+	129[label = < <B>raw_fastqc</B><br />sample: sample_1 >, color = black, style="rounded"];
+	130[label = < <B>raw_fastqc</B><br />sample: sample_2 >, color = black, style="rounded"];
+	131[label = < <B>raw_fastqc</B><br />sample: sample_3 >, color = black, style="rounded"];
+	132[label = < <B>raw_fastqc</B><br />sample: sample_4 >, color = black, style="rounded"];
+	133[label = < <B>raw_fastqc</B><br />sample: sample_5 >, color = black, style="rounded"];
+	134[label = < <B>fastq_screen</B><br />sample: sample_1 >, color = black, style="rounded"];
+	135[label = < <B>fastq_screen</B><br />sample: sample_2 >, color = black, style="rounded"];
+	136[label = < <B>fastq_screen</B><br />sample: sample_3 >, color = black, style="rounded"];
+	137[label = < <B>fastq_screen</B><br />sample: sample_4 >, color = black, style="rounded"];
+	138[label = < <B>fastq_screen</B><br />sample: sample_5 >, color = black, style="rounded"];
+	139[label = < <B>biscuit_sifter</B><br />sample: sample_1 >, color = red, style="rounded"];
+	140[label = < <B>biscuit_sifter</B><br />sample: sample_2 >, color = red, style="rounded"];
+	141[label = < <B>biscuit_sifter</B><br />sample: sample_3 >, color = red, style="rounded"];
+	142[label = < <B>biscuit_sifter</B><br />sample: sample_4 >, color = red, style="rounded"];
+	143[label = < <B>biscuit_sifter</B><br />sample: sample_5 >, color = red, style="rounded"];
+	144[label = < <B>trim_reads</B><br />sample: sample_1 >, color = black, style="rounded"];
+	145[label = < <B>trim_reads</B><br />sample: sample_2 >, color = black, style="rounded"];
+	146[label = < <B>trim_reads</B><br />sample: sample_3 >, color = black, style="rounded"];
+	147[label = < <B>trim_reads</B><br />sample: sample_4 >, color = black, style="rounded"];
+	148[label = < <B>trim_reads</B><br />sample: sample_5 >, color = black, style="rounded"];
 	1 -> 0
-	2 -> 0
-	4 -> 0
+	3 -> 0
+	5 -> 0
 	6 -> 0
 	8 -> 0
 	10 -> 0
 	12 -> 0
 	14 -> 0
-	15 -> 0
 	16 -> 0
 	17 -> 0
 	18 -> 0
@@ -145,17 +168,12 @@ digraph snakemake_dag {
 	22 -> 0
 	23 -> 0
 	24 -> 0
-	35 -> 0
-	36 -> 0
-	82 -> 0
-	93 -> 0
-	99 -> 0
+	25 -> 0
+	26 -> 0
+	42 -> 0
+	43 -> 0
+	89 -> 0
 	100 -> 0
-	101 -> 0
-	102 -> 0
-	103 -> 0
-	104 -> 0
-	105 -> 0
 	106 -> 0
 	107 -> 0
 	108 -> 0
@@ -170,231 +188,307 @@ digraph snakemake_dag {
 	117 -> 0
 	118 -> 0
 	119 -> 0
-	3 -> 2
+	120 -> 0
+	121 -> 0
+	122 -> 0
+	123 -> 0
+	125 -> 0
+	126 -> 0
+	127 -> 0
+	128 -> 0
+	129 -> 0
+	130 -> 0
+	131 -> 0
+	132 -> 0
+	133 -> 0
+	134 -> 0
+	135 -> 0
+	136 -> 0
+	137 -> 0
+	138 -> 0
+	139 -> 0
+	140 -> 0
+	141 -> 0
+	142 -> 0
+	143 -> 0
+	4 -> 3
 	1 -> 3
 	1 -> 4
-	5 -> 4
+	4 -> 5
 	1 -> 5
-	115 -> 5
 	1 -> 6
 	7 -> 6
 	1 -> 7
-	116 -> 7
+	139 -> 7
 	1 -> 8
 	9 -> 8
 	1 -> 9
-	117 -> 9
+	140 -> 9
 	1 -> 10
 	11 -> 10
 	1 -> 11
-	118 -> 11
+	141 -> 11
 	1 -> 12
 	13 -> 12
 	1 -> 13
-	119 -> 13
-	5 -> 14
-	115 -> 14
-	7 -> 15
-	116 -> 15
-	9 -> 16
-	117 -> 16
-	11 -> 17
-	118 -> 17
-	13 -> 18
-	119 -> 18
-	1 -> 19
-	14 -> 19
-	115 -> 19
-	1 -> 20
+	142 -> 13
+	1 -> 14
+	15 -> 14
+	1 -> 15
+	143 -> 15
+	7 -> 16
+	139 -> 16
+	9 -> 17
+	140 -> 17
+	11 -> 18
+	141 -> 18
+	13 -> 19
+	142 -> 19
 	15 -> 20
-	116 -> 20
+	143 -> 20
 	1 -> 21
 	16 -> 21
-	117 -> 21
+	139 -> 21
 	1 -> 22
 	17 -> 22
-	118 -> 22
+	140 -> 22
 	1 -> 23
 	18 -> 23
-	119 -> 23
-	25 -> 24
-	26 -> 24
-	27 -> 24
-	28 -> 24
-	29 -> 24
-	30 -> 24
-	31 -> 24
-	32 -> 24
-	33 -> 24
-	34 -> 24
-	105 -> 24
-	106 -> 24
-	107 -> 24
-	108 -> 24
-	109 -> 24
-	110 -> 24
-	111 -> 24
-	112 -> 24
-	113 -> 24
-	114 -> 24
-	115 -> 24
-	116 -> 24
-	117 -> 24
-	118 -> 24
-	119 -> 24
-	120 -> 24
-	121 -> 24
-	122 -> 24
-	123 -> 24
-	124 -> 24
+	141 -> 23
+	1 -> 24
+	19 -> 24
+	142 -> 24
 	1 -> 25
-	5 -> 25
-	115 -> 25
-	1 -> 26
-	7 -> 26
-	116 -> 26
-	1 -> 27
-	9 -> 27
-	117 -> 27
-	1 -> 28
-	11 -> 28
-	118 -> 28
-	1 -> 29
-	13 -> 29
-	119 -> 29
-	115 -> 30
-	116 -> 31
-	117 -> 32
-	118 -> 33
-	119 -> 34
-	25 -> 35
-	26 -> 35
-	27 -> 35
-	28 -> 35
-	29 -> 35
-	37 -> 36
-	46 -> 36
-	55 -> 36
-	64 -> 36
-	73 -> 36
-	38 -> 37
-	40 -> 37
-	41 -> 37
-	42 -> 37
-	43 -> 37
-	44 -> 37
-	45 -> 37
-	39 -> 38
-	115 -> 39
-	39 -> 40
-	39 -> 41
-	39 -> 42
-	39 -> 43
-	39 -> 44
-	39 -> 45
-	47 -> 46
-	49 -> 46
-	50 -> 46
-	51 -> 46
-	52 -> 46
-	53 -> 46
-	54 -> 46
-	48 -> 47
-	116 -> 48
-	48 -> 49
-	48 -> 50
-	48 -> 51
-	48 -> 52
-	48 -> 53
-	48 -> 54
-	56 -> 55
-	58 -> 55
-	59 -> 55
-	60 -> 55
-	61 -> 55
-	62 -> 55
-	63 -> 55
-	57 -> 56
-	117 -> 57
-	57 -> 58
-	57 -> 59
-	57 -> 60
-	57 -> 61
-	57 -> 62
-	57 -> 63
-	65 -> 64
-	67 -> 64
-	68 -> 64
-	69 -> 64
-	70 -> 64
-	71 -> 64
-	72 -> 64
-	66 -> 65
-	118 -> 66
-	66 -> 67
-	66 -> 68
-	66 -> 69
-	66 -> 70
-	66 -> 71
-	66 -> 72
-	74 -> 73
-	76 -> 73
-	77 -> 73
-	78 -> 73
-	79 -> 73
-	80 -> 73
-	81 -> 73
-	75 -> 74
-	119 -> 75
-	75 -> 76
-	75 -> 77
-	75 -> 78
-	75 -> 79
-	75 -> 80
-	75 -> 81
-	83 -> 82
-	85 -> 82
-	87 -> 82
-	89 -> 82
-	91 -> 82
-	84 -> 83
-	115 -> 84
-	86 -> 85
-	116 -> 86
-	88 -> 87
-	117 -> 88
+	20 -> 25
+	143 -> 25
+	27 -> 26
+	28 -> 26
+	29 -> 26
+	30 -> 26
+	31 -> 26
+	32 -> 26
+	33 -> 26
+	34 -> 26
+	35 -> 26
+	36 -> 26
+	37 -> 26
+	38 -> 26
+	39 -> 26
+	40 -> 26
+	41 -> 26
+	129 -> 26
+	130 -> 26
+	131 -> 26
+	132 -> 26
+	133 -> 26
+	134 -> 26
+	135 -> 26
+	136 -> 26
+	137 -> 26
+	138 -> 26
+	144 -> 26
+	145 -> 26
+	146 -> 26
+	147 -> 26
+	148 -> 26
+	139 -> 27
+	140 -> 28
+	141 -> 29
+	142 -> 30
+	143 -> 31
+	1 -> 32
+	7 -> 32
+	139 -> 32
+	1 -> 33
+	9 -> 33
+	140 -> 33
+	1 -> 34
+	11 -> 34
+	141 -> 34
+	1 -> 35
+	13 -> 35
+	142 -> 35
+	1 -> 36
+	15 -> 36
+	143 -> 36
+	139 -> 37
+	140 -> 38
+	141 -> 39
+	142 -> 40
+	143 -> 41
+	32 -> 42
+	33 -> 42
+	34 -> 42
+	35 -> 42
+	36 -> 42
+	44 -> 43
+	53 -> 43
+	62 -> 43
+	71 -> 43
+	80 -> 43
+	45 -> 44
+	47 -> 44
+	48 -> 44
+	49 -> 44
+	50 -> 44
+	51 -> 44
+	52 -> 44
+	46 -> 45
+	139 -> 46
+	46 -> 47
+	46 -> 48
+	46 -> 49
+	46 -> 50
+	46 -> 51
+	46 -> 52
+	54 -> 53
+	56 -> 53
+	57 -> 53
+	58 -> 53
+	59 -> 53
+	60 -> 53
+	61 -> 53
+	55 -> 54
+	140 -> 55
+	55 -> 56
+	55 -> 57
+	55 -> 58
+	55 -> 59
+	55 -> 60
+	55 -> 61
+	63 -> 62
+	65 -> 62
+	66 -> 62
+	67 -> 62
+	68 -> 62
+	69 -> 62
+	70 -> 62
+	64 -> 63
+	141 -> 64
+	64 -> 65
+	64 -> 66
+	64 -> 67
+	64 -> 68
+	64 -> 69
+	64 -> 70
+	72 -> 71
+	74 -> 71
+	75 -> 71
+	76 -> 71
+	77 -> 71
+	78 -> 71
+	79 -> 71
+	73 -> 72
+	142 -> 73
+	73 -> 74
+	73 -> 75
+	73 -> 76
+	73 -> 77
+	73 -> 78
+	73 -> 79
+	81 -> 80
+	83 -> 80
+	84 -> 80
+	85 -> 80
+	86 -> 80
+	87 -> 80
+	88 -> 80
+	82 -> 81
+	143 -> 82
+	82 -> 83
+	82 -> 84
+	82 -> 85
+	82 -> 86
+	82 -> 87
+	82 -> 88
 	90 -> 89
-	118 -> 90
-	92 -> 91
-	119 -> 92
-	94 -> 93
-	95 -> 93
-	96 -> 93
-	97 -> 93
-	98 -> 93
-	84 -> 94
-	86 -> 95
-	88 -> 96
-	90 -> 97
-	92 -> 98
-	4 -> 99
-	6 -> 100
-	8 -> 101
-	10 -> 102
-	12 -> 103
-	99 -> 104
-	100 -> 104
-	101 -> 104
-	102 -> 104
-	103 -> 104
-	1 -> 115
-	120 -> 115
-	1 -> 116
-	121 -> 116
-	1 -> 117
-	122 -> 117
+	92 -> 89
+	94 -> 89
+	96 -> 89
+	98 -> 89
+	91 -> 90
+	139 -> 91
+	93 -> 92
+	140 -> 93
+	95 -> 94
+	141 -> 95
+	97 -> 96
+	142 -> 97
+	99 -> 98
+	143 -> 99
+	101 -> 100
+	102 -> 100
+	103 -> 100
+	104 -> 100
+	105 -> 100
+	91 -> 101
+	93 -> 102
+	95 -> 103
+	97 -> 104
+	99 -> 105
+	139 -> 106
+	140 -> 107
+	141 -> 108
+	142 -> 109
+	143 -> 110
+	106 -> 111
+	107 -> 111
+	108 -> 111
+	109 -> 111
+	110 -> 111
+	6 -> 112
+	8 -> 113
+	10 -> 114
+	12 -> 115
+	14 -> 116
+	112 -> 117
+	113 -> 117
+	114 -> 117
+	115 -> 117
+	116 -> 117
 	1 -> 118
-	123 -> 118
+	6 -> 118
 	1 -> 119
-	124 -> 119
+	8 -> 119
+	1 -> 120
+	10 -> 120
+	1 -> 121
+	12 -> 121
+	1 -> 122
+	14 -> 122
+	6 -> 123
+	124 -> 123
+	8 -> 125
+	124 -> 125
+	10 -> 126
+	124 -> 126
+	12 -> 127
+	124 -> 127
+	14 -> 128
+	124 -> 128
+	2 -> 129
+	2 -> 130
+	2 -> 131
+	2 -> 132
+	2 -> 133
+	2 -> 134
+	2 -> 135
+	2 -> 136
+	2 -> 137
+	2 -> 138
+	1 -> 139
+	2 -> 139
+	1 -> 140
+	2 -> 140
+	1 -> 141
+	2 -> 141
+	1 -> 142
+	2 -> 142
+	1 -> 143
+	2 -> 143
+	2 -> 144
+	2 -> 145
+	2 -> 146
+	2 -> 147
+	2 -> 148
 }            

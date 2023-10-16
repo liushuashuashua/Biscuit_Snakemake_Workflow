@@ -3,24 +3,26 @@ digraph snakemake_dag {
     node[shape=box, style=rounded, fontname=sans,                 fontsize=10, penwidth=2];
     edge[penwidth=2, color=grey];
 	0[label = < <B>all</B> >, color = black, style="rounded"];
-	1[label = < <B>biscuit_mergecg</B> >, color = red, style="rounded"];
-	2[label = < <B>biscuit_pileup</B> >, color = red, style="rounded"];
-	3[label = < <B>multiQC</B> >, color = black, style="rounded"];
-	4[label = < <B>biscuit_qc</B> >, color = red, style="rounded"];
-	5[label = < <B>percent_covered</B> >, color = black, style="rounded"];
-	6[label = < <B>raw_fastqc</B><br />sample: sample_1 >, color = black, style="rounded"];
-	7[label = < <B>biscuit_blaster</B><br />sample: sample_1 >, color = red, style="rounded"];
-	1 -> 0
-	3 -> 0
-	5 -> 0
-	6 -> 0
+	1[label = < <B>rename_fastq_files</B> >, color = black, style="rounded"];
+	2[label = < <B>biscuit_mergecg</B> >, color = red, style="rounded"];
+	3[label = < <B>biscuit_pileup</B> >, color = red, style="rounded"];
+	4[label = < <B>multiQC</B> >, color = black, style="rounded"];
+	5[label = < <B>samtools_flagstat</B> >, color = black, style="rounded"];
+	6[label = < <B>biscuit_qc</B> >, color = red, style="rounded"];
+	7[label = < <B>raw_fastqc</B><br />sample: sample_1 >, color = black, style="rounded"];
+	8[label = < <B>biscuit_sifter</B><br />sample: sample_1 >, color = red, style="rounded"];
+	2 -> 0
+	4 -> 0
 	7 -> 0
-	2 -> 1
-	7 -> 2
-	4 -> 3
-	6 -> 3
-	7 -> 3
-	2 -> 4
+	8 -> 0
+	3 -> 2
+	8 -> 3
+	5 -> 4
+	6 -> 4
 	7 -> 4
-	4 -> 5
+	8 -> 5
+	3 -> 6
+	8 -> 6
+	1 -> 7
+	1 -> 8
 }            

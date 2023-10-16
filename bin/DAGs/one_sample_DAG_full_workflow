@@ -2,99 +2,125 @@ digraph snakemake_dag {
     graph[bgcolor=white, margin=0];
     node[shape=box, style=rounded, fontname=sans,                 fontsize=10, penwidth=2];
     edge[penwidth=2, color=grey];
-	0[label = < <B>all</B> >, color = black, style="rounded"];
-	1[label = < <B>build_ref_with_methylation_controls</B> >, color = black, style="rounded,dashed"];
-	2[label = < <B>bismap_assets</B> >, color = black, style="rounded,dashed"];
-	3[label = < <B>general_assets</B> >, color = black, style="rounded,dashed"];
-	4[label = < <B>biscuit_mergecg</B> >, color = red, style="rounded"];
-	5[label = < <B>biscuit_pileup</B> >, color = red, style="rounded"];
-	6[label = < <B>biscuit_snps</B> >, color = red, style="rounded,dashed"];
-	7[label = < <B>biscuit_epiread</B> >, color = red, style="rounded,dashed"];
-	8[label = < <B>multiQC</B> >, color = black, style="rounded"];
-	9[label = < <B>biscuit_qc</B> >, color = red, style="rounded"];
-	10[label = < <B>preseq</B> >, color = black, style="rounded,dashed"];
-	11[label = < <B>percent_covered</B> >, color = black, style="rounded"];
-	12[label = < <B>obs_exp_coverage_plot</B> >, color = black, style="rounded,dashed"];
-	13[label = < <B>obs_exp_coverage_values</B> >, color = black, style="rounded,dashed"];
-	14[label = < <B>obs_exp_coverage_genomecov_cpg</B> >, color = black, style="rounded,dashed"];
-	15[label = < <B>obs_exp_coverage_genomecov</B> >, color = black, style="rounded,dashed"];
-	16[label = < <B>obs_exp_coverage_genomecov_cgi</B> >, color = black, style="rounded,dashed"];
-	17[label = < <B>obs_exp_coverage_genomecov_exon</B> >, color = black, style="rounded,dashed"];
-	18[label = < <B>obs_exp_coverage_genomecov_genic</B> >, color = black, style="rounded,dashed"];
-	19[label = < <B>obs_exp_coverage_genomecov_intergenic</B> >, color = black, style="rounded,dashed"];
-	20[label = < <B>obs_exp_coverage_genomecov_rmsk</B> >, color = black, style="rounded,dashed"];
-	21[label = < <B>obs_exp_coverage_genomecov_mapped</B> >, color = black, style="rounded,dashed"];
-	22[label = < <B>cpg_stats_feature_plot</B> >, color = black, style="rounded,dashed"];
-	23[label = < <B>cpg_stats_feature_table</B> >, color = black, style="rounded,dashed"];
-	24[label = < <B>cpg_stats_genomecov</B> >, color = black, style="rounded,dashed"];
-	25[label = < <B>cpg_stats_cgi_plot</B> >, color = black, style="rounded,dashed"];
-	26[label = < <B>cpg_stats_cgi_table</B> >, color = black, style="rounded,dashed"];
-	27[label = < <B>methylation_controls_qc</B> >, color = black, style="rounded,dashed"];
-	28[label = < <B>methylation_controls_figure</B> >, color = black, style="rounded,dashed"];
-	29[label = < <B>raw_fastqc</B><br />sample: sample_1 >, color = black, style="rounded"];
-	30[label = < <B>fastq_screen</B><br />sample: sample_1 >, color = black, style="rounded,dashed"];
-	31[label = < <B>biscuit_blaster</B> >, color = red, style="rounded"];
-	32[label = < <B>trim_reads</B><br />sample: sample_1 >, color = black, style="rounded,dashed"];
+	0[label  = < <B>all</B> >, color = black style="rounded"];
+	1[label  = < <B>build_ref_with_methylation_controls</B> >, color = black style="rounded"];
+	2[label  = < <B>rename_fastq_files</B> >, color = black style="rounded"];
+	3[label  = < <B>bismap_assets</B> >, color = black style="rounded"];
+	4[label  = < <B>general_assets</B> >, color = black style="rounded"];
+	5[label  = < <B>wcgw_assets</B> >, color = black style="rounded"];
+	6[label  = < <B>biscuit_mergecg</B> >, color = red, style="rounded"];
+	7[label  = < <B>biscuit_pileup</B> >, color = red, style="rounded"];
+	8[label  = < <B>biscuit_snps</B> >, color = red, style="rounded"];
+	9[label  = < <B>biscuit_epiread</B> >, color = red, style="rounded"];
+	10[label = < <B>multiQC</B> >, color = black style="rounded"];
+	11[label = < <B>samtools_flagstat</B> >, color = black style="rounded"];
+	12[label = < <B>biscuit_qc</B> >, color = red, style="rounded"];
+	13[label = < <B>preseq</B> >, color = black style="rounded"];
+	14[label = < <B>percent_covered</B> >, color = black style="rounded"];
+	15[label = < <B>obs_exp_coverage_plot</B> >, color = black style="rounded"];
+	16[label = < <B>obs_exp_coverage_values</B> >, color = black style="rounded"];
+	17[label = < <B>obs_exp_coverage_genomecov_cpg</B> >, color = black style="rounded"];
+	18[label = < <B>obs_exp_coverage_genomecov</B> >, color = black style="rounded"];
+	19[label = < <B>obs_exp_coverage_genomecov_cgi</B> >, color = black style="rounded"];
+	20[label = < <B>obs_exp_coverage_genomecov_exon</B> >, color = black style="rounded"];
+	21[label = < <B>obs_exp_coverage_genomecov_genic</B> >, color = black style="rounded"];
+	22[label = < <B>obs_exp_coverage_genomecov_intergenic</B> >, color = black style="rounded"];
+	23[label = < <B>obs_exp_coverage_genomecov_rmsk</B> >, color = black style="rounded"];
+	24[label = < <B>obs_exp_coverage_genomecov_mapped</B> >, color = black style="rounded"];
+	25[label = < <B>cpg_stats_feature_plot</B> >, color = black style="rounded"];
+	26[label = < <B>cpg_stats_feature_table</B> >, color = black style="rounded"];
+	27[label = < <B>cpg_stats_genomecov</B> >, color = black style="rounded"];
+	28[label = < <B>cpg_stats_cgi_plot</B> >, color = black style="rounded"];
+	29[label = < <B>cpg_stats_cgi_table</B> >, color = black style="rounded"];
+	30[label = < <B>covg_uniformity</B> >, color = black style="rounded"];
+	31[label = < <B>uniformity_plot</B> >, color = black style="rounded"];
+	32[label = < <B>methylation_controls_qc</B> >, color = black style="rounded"];
+	33[label = < <B>methylation_controls_figure</B> >, color = black style="rounded"];
+	34[label = < <B>binned_averages</B> >, color = black style="rounded"];
+	35[label = < <B>region_centered_bin_averages</B> >, color = black style="rounded"];
+	36[label = < <B>get_regions_for_centered_bin_averages_from_bed</B> >, color = black style="rounded"];
+	37[label = < <B>raw_fastqc</B><br />sample: sample_1 >, color = black style="rounded"];
+	38[label = < <B>fastq_screen</B><br />sample: sample_1 >, color = black style="rounded"];
+	39[label = < <B>biscuit_sifter</B><br />sample: sample_1 >, color = red, style="rounded"];
+	40[label = < <B>trim_reads</B><br />sample: sample_1 >, color = black style="rounded"];
 	1 -> 0
-	2 -> 0
-	4 -> 0
+	3 -> 0
+	5 -> 0
 	6 -> 0
-	7 -> 0
 	8 -> 0
-	11 -> 0
-	12 -> 0
-	22 -> 0
+	9 -> 0
+	10 -> 0
+	14 -> 0
+	15 -> 0
 	25 -> 0
-	27 -> 0
 	28 -> 0
-	29 -> 0
 	30 -> 0
 	31 -> 0
-	3 -> 2
+	32 -> 0
+	33 -> 0
+	34 -> 0
+	35 -> 0
+	37 -> 0
+	38 -> 0
+	39 -> 0
+	4 -> 3
 	1 -> 3
 	1 -> 4
-	5 -> 4
+	4 -> 5
 	1 -> 5
-	31 -> 5
-	5 -> 6
-	31 -> 6
+	1 -> 6
+	7 -> 6
 	1 -> 7
-	6 -> 7
-	31 -> 7
-	9 -> 8
-	10 -> 8
-	29 -> 8
-	30 -> 8
-	31 -> 8
-	32 -> 8
+	39 -> 7
+	7 -> 8
+	39 -> 8
 	1 -> 9
-	5 -> 9
-	31 -> 9
-	31 -> 10
-	9 -> 11
-	13 -> 12
-	14 -> 13
-	16 -> 13
-	17 -> 13
-	18 -> 13
-	19 -> 13
-	20 -> 13
-	21 -> 13
-	15 -> 14
-	31 -> 15
-	15 -> 16
-	15 -> 17
-	15 -> 18
-	15 -> 19
-	15 -> 20
-	15 -> 21
-	23 -> 22
-	24 -> 23
-	31 -> 24
+	8 -> 9
+	39 -> 9
+	11 -> 10
+	12 -> 10
+	13 -> 10
+	37 -> 10
+	38 -> 10
+	40 -> 10
+	39 -> 11
+	1 -> 12
+	7 -> 12
+	39 -> 12
+	39 -> 13
+	12 -> 14
+	16 -> 15
+	17 -> 16
+	19 -> 16
+	20 -> 16
+	21 -> 16
+	22 -> 16
+	23 -> 16
+	24 -> 16
+	18 -> 17
+	39 -> 18
+	18 -> 19
+	18 -> 20
+	18 -> 21
+	18 -> 22
+	18 -> 23
+	18 -> 24
 	26 -> 25
-	24 -> 26
-	4 -> 27
-	27 -> 28
-	1 -> 31
-	32 -> 31
+	27 -> 26
+	39 -> 27
+	29 -> 28
+	27 -> 29
+	39 -> 30
+	30 -> 31
+	6 -> 32
+	32 -> 33
+	1 -> 34
+	6 -> 34
+	6 -> 35
+	36 -> 35
+	2 -> 37
+	2 -> 38
+	1 -> 39
+	2 -> 39
+	2 -> 40
 }            
