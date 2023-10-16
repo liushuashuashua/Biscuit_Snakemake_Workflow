@@ -29,7 +29,7 @@ rule get_regions_for_centered_bin_averages_from_bed:
         config['envmodules']['python3'],
     shell:
         """
-        python3 workflow/scripts/region_centered_bin_averages.py {params.args_list} {input.region_bed} | \
+        python3 workflow/scripts/region_centered_bin_averages.py {params.args_list} {input.region_bed} 2> {log} | \
         sort -k1,1 -k2,2n > {output.region_centered_bins}
         """
 
@@ -58,10 +58,10 @@ rule region_centered_bin_averages:
         bedtools intersect \
             -a {input.region_bins} \
             -b {input.merged_sample_bed} \
-            -sorted -wo | \
+            -sorted -wo 2> {log} | \
         bedtools groupby \
             -g 1-10 \
             -c 14 \
-            -o mean | \
+            -o mean 2>> {log} | \
         awk '{{print $7,"\\t",$8,"\\t",$9,"\\t",$4,"\\t",$10,"\\t",$11}}' > {output.bed}
         """
