@@ -47,8 +47,8 @@ The following dependencies are downloaded when running with `--use-conda`, other
 | `preseq`       | 3.2.0                    | Must be compiled with htslib enabled |
 | `fastqc`       | 0.12.1                   |       |
 | `trim_galore`  | 0.6.10                   |       |
-| `fastq_screen` | 0.15.3                   | Only required if running `fastq_screen`)
-| `bismark`      | 0.24.0                   | Only required if running `fastq_screen`)
+| `fastq_screen` | 0.15.3                   | Only required if running `fastq_screen` |
+| `bismark`      | 0.24.0                   | Only required if running `fastq_screen` |
 | `pigz`         | 2.6                      |       |
 | `python`       | 3.11.3                   |       |
 | `pandas`       | 2.0.0                    |       |
