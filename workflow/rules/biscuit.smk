@@ -89,6 +89,7 @@ rule biscuit_sifter:
         SM = '{sample}', # also used for ID
         al_threads = config['hpc_parameters']['biscuit_sifter_threads'],
         st_threads = config['hpc_parameters']['samtools_index_threads'],
+        index = config['ref']['index'],
     log:
         biscuit = f'{output_directory}/logs/biscuit/biscuit_sifter.{{sample}}.log',
         dupsifter = f'{output_directory}/logs/biscuit/dupsifter.{{sample}}.log',
@@ -114,7 +115,7 @@ rule biscuit_sifter:
             {params.args_list} \
             -@ {params.al_threads} \
             -R '@RG\tLB:{params.LB}\tID:{params.SM}\tPL:{params.PL}\tPU:{params.PU}\tSM:{params.SM}' \
-            {input.reference} \
+            {params.index} \
             <(zcat {input.R1}) \
             <(zcat {input.R2}) 2> {log.biscuit} | \
         dupsifter --stats-output {output.dup} {input.reference} 2> {log.dupsifter} | \
