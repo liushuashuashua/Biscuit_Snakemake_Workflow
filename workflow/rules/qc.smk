@@ -122,7 +122,7 @@ def get_multiQC_params(wildcards):
         indirs += f' {out}/analysis/fastq_screen' # space needed at beginning to separate directories
     if config['trim_galore']['trim_before_biscuit']:
         indirs += f' {out}/analysis/trim_reads' # space needed at beginning to separate directories
-    if config['preseq']:
+    if config['preseq']['run']:
         indirs += f' {out}/analysis/preseq' # space needed at beginning to separate directories
     return indirs
 
