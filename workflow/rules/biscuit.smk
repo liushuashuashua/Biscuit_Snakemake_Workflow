@@ -50,6 +50,12 @@ def get_biscuit_reference(wildcards):
     else:
         return config['ref']['fasta']
 
+def get_biscuit_index(wildcards):
+    if config['build_ref_with_methylation_controls']: # Currently not set up to be generated
+        return 'merged_reference/merged.fa.gz'
+    else:
+        return config['ref']['index']
+
 def get_rename_fastq_output_R1(wildcards):
     cp_output = checkpoints.rename_fastq_files.get().output.symlink_dir
 
@@ -75,6 +81,7 @@ def get_rename_fastq_output_R2(wildcards):
 rule biscuit_sifter:
     input:
         reference = get_biscuit_reference,
+        index = get_biscuit_index,
         R1 = get_rename_fastq_output_R1,
         R2 = get_rename_fastq_output_R2,
     output:
@@ -89,7 +96,6 @@ rule biscuit_sifter:
         SM = '{sample}', # also used for ID
         al_threads = config['hpc_parameters']['biscuit_sifter_threads'],
         st_threads = config['hpc_parameters']['samtools_index_threads'],
-        index = config['ref']['index'],
     log:
         biscuit = f'{output_directory}/logs/biscuit/biscuit_sifter.{{sample}}.log',
         dupsifter = f'{output_directory}/logs/biscuit/dupsifter.{{sample}}.log',
@@ -115,7 +121,7 @@ rule biscuit_sifter:
             {params.args_list} \
             -@ {params.al_threads} \
             -R '@RG\tLB:{params.LB}\tID:{params.SM}\tPL:{params.PL}\tPU:{params.PU}\tSM:{params.SM}' \
-            {params.index} \
+            {input.index} \
             <(zcat {input.R1}) \
             <(zcat {input.R2}) 2> {log.biscuit} | \
         dupsifter --stats-output {output.dup} {input.reference} 2> {log.dupsifter} | \
