@@ -212,7 +212,6 @@ rule biscuit_mergecg:
         tabix -p bed {output.mergecg_gz} 2> {log.mergecg_tbi}
         """
 
-
 rule biscuit_ch_vcf2bed:
     input:
         vcf_gz = f'{output_directory}/analysis/pileup/{{sample}}.vcf.gz',
