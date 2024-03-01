@@ -280,21 +280,19 @@ def get_bed_for_bigwigs (wildcards):
     if (wildcards.cx in ["CA", "CC", "CT"]):
         return f'{output_directory}/analysis/split_ch_bed/{wildcards.cx}/{wildcards.sample}_{wildcards.cx}.bed.gz'
 
-rule pileup_bigwigs:
+rule beta_bigwigs:
     input:
         chrom_sizes=f'{output_directory}/analysis/prep_chromsizes_file/chrom_sizes.tsv',
         bed_gz = get_bed_for_bigwigs
     output:
-        bed = temp(f'{output_directory}/analysis/pileup_bigwigs/{{sample}}_{{cx}}.bed'),
-        bigwig=f'{output_directory}/analysis/pileup_bigwigs/{{sample}}_{{cx}}.bw',
-        bed_gz = f'{output_directory}/analysis/pileup_bigwigs/{{sample}}_{{cx}}.bed.gz',
-        bed_tbi = f'{output_directory}/analysis/pileup_bigwigs/{{sample}}_{{cx}}.bed.gz.tbi',
+        bed = temp(f'{output_directory}/analysis/beta_bigwigs/{{sample}}_{{cx}}.bed'),
+        bigwig=f'{output_directory}/analysis/beta_bigwigs/{{sample}}_{{cx}}.bw',
     params:
-        min_cov=5
+        min_cov=config['make_bigwigs']['min_depth']
     log:
-        f'{output_directory}/logs/pileup_bigwigs/{{sample}}_{{cx}}.log',
+        f'{output_directory}/logs/beta_bigwigs/{{sample}}_{{cx}}.log',
     benchmark:
-        f'{output_directory}/benchmarks/pileup_bigwigs/{{sample}}_{{cx}}.txt'
+        f'{output_directory}/benchmarks/beta_bigwigs/{{sample}}_{{cx}}.txt'
     threads: 1 #config['hpc_parameters']['pileup_threads']
     resources:
         mem_gb = config['hpc_parameters']['intermediate_memory_gb'],
@@ -310,10 +308,6 @@ rule pileup_bigwigs:
         zcat {input.bed_gz} | perl -F"\\t" -lane 'print $_ if $F[4] >= {params.min_cov}' | cut -f1-4 > {output.bed}
 
         bedGraphToBigWig {output.bed} {input.chrom_sizes} {output.bigwig}
-
-
-        bgzip -c -@ {threads} {output.bed} > {output.bed_gz}
-        tabix -p bed {output.bed_gz}
 
         """
 

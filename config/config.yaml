@@ -184,6 +184,12 @@ region_centered_bin_averages:
     # Additonal arguments to pass to workflow/scripts/region_centered_bin_averages.py
     # For more info, run "python workflow/scripts/region_centered_bin_averages.py --help"
     args_list: '--flankstep 5 --flanknumber 200 --numinternal 1 --strand 4 --middle --collapse'
+
+make_bigwigs:
+    run: False
+    min_depth: 5
+    contexts: ['mergecg', 'CA']
+
 #-----------------------------------------------------------------------------------------------------------------------
 
 # Environment Modules

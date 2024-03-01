@@ -77,9 +77,9 @@ rule all:
         ),
         #bigwigs
         expand(
-            f'{output_directory}/analysis/pileup_bigwigs/{{samples.sample}}_{{cx}}.bw',
-            samples=SAMPLES.itertuples(), cx=["mergecg", "CA"]
-        ),
+            f'{output_directory}/analysis/beta_bigwigs/{{samples.sample}}_{{cx}}.bw',
+            samples=SAMPLES.itertuples(), cx=config['make_bigwigs']['contexts']
+        ) if config['make_bigwigs']['run'] else [],
         # biscuit vcf2bed -t snp
         expand(
             f'{output_directory}/analysis/snps/{{samples.sample}}.snp.bed.gz',
