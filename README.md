@@ -44,6 +44,7 @@ The following dependencies are downloaded when running with `--use-conda`, other
 | `dupsifter`    | 1.2.0                    |       |
 | `parallel`     | 20230322                 |       |
 | `bedtools`     | 2.30.0                   |       |
+| `ucsc-bedgraphtobigwig`     | 455                   | Only required if running `beta_bigwigs`      |
 | `preseq`       | 3.2.0                    | Must be compiled with htslib enabled |
 | `fastqc`       | 0.12.1                   |       |
 | `trim_galore`  | 0.6.10                   |       |
