@@ -210,4 +210,5 @@ envmodules:
     fastq_screen: bbc2/fastq_screen/fastq_screen-0.14.0
     bismark: bbc2/bismark/bismark-0.24.0
     python3: bbc2/python3/python-3.11.3
+    ucsc: bbc2/ucsc_tools/ucsc_tools-20231127
 #-----------------------------------------------------------------------------------------------------------------------
