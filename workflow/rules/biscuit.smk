@@ -275,6 +275,8 @@ rule split_ch_bed:
         """
 
 def get_bed_for_bigwigs (wildcards):
+    if (wildcards.cx=="CG"):
+        return f'{output_directory}/analysis/pileup/{wildcards.sample}.bed.gz'
     if (wildcards.cx=="mergecg"):
         return f'{output_directory}/analysis/pileup/{wildcards.sample}_mergecg.bed.gz'
     if (wildcards.cx in ["CA", "CC", "CT"]):
@@ -293,7 +295,7 @@ rule beta_bigwigs:
         f'{output_directory}/logs/beta_bigwigs/{{sample}}_{{cx}}.log',
     benchmark:
         f'{output_directory}/benchmarks/beta_bigwigs/{{sample}}_{{cx}}.txt'
-    threads: 1 #config['hpc_parameters']['pileup_threads']
+    threads: 1 
     resources:
         mem_gb = config['hpc_parameters']['intermediate_memory_gb'],
         time = config['runtime']['medium'],
