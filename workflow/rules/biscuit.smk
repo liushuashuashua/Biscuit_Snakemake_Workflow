@@ -212,6 +212,111 @@ rule biscuit_mergecg:
         tabix -p bed {output.mergecg_gz} 2> {log.mergecg_tbi}
         """
 
+
+rule biscuit_ch_vcf2bed:
+    input:
+        vcf_gz = f'{output_directory}/analysis/pileup/{{sample}}.vcf.gz',
+        vcf_tabix = f'{output_directory}/analysis/pileup/{{sample}}.vcf.gz.tbi',
+    output:
+        bed = temp(f'{output_directory}/analysis/biscuit_ch_vcf2bed/{{sample}}_ch.bed'),
+        bed_gz = f'{output_directory}/analysis/biscuit_ch_vcf2bed/{{sample}}_ch.bed.gz',
+        bed_tbi = f'{output_directory}/analysis/biscuit_ch_vcf2bed/{{sample}}_ch.bed.gz.tbi',
+    params:
+    log:
+        vcf2bed = f'{output_directory}/logs/biscuit_ch_vcf2bed/{{sample}}_ch.vcf2bed.log',
+        bed_gz = f'{output_directory}/logs/biscuit_ch_vcf2bed/{{sample}}_ch.bed_gz.log',
+        bed_tbi = f'{output_directory}/logs/biscuit_ch_vcf2bed/{{sample}}_ch.bed_tabix.log',
+    benchmark:
+        f'{output_directory}/benchmarks/biscuit_ch_vcf2bed/{{sample}}_ch.txt',
+    threads: config['hpc_parameters']['pileup_threads']
+    resources:
+        mem_gb = config['hpc_parameters']['intermediate_memory_gb'],
+        time = config['runtime']['medium'],
+    conda:
+        '../envs/biscuit.yaml'
+    envmodules:
+        config['envmodules']['biscuit'],
+        config['envmodules']['htslib'],
+    shell:
+        """
+        biscuit vcf2bed -t ch -e {input.vcf_gz} 1> {output.bed} 2> {log.vcf2bed}
+        bgzip -c -@ {threads} {output.bed} 1> {output.bed_gz} 2> {log.bed_gz}
+        tabix -p bed {output.bed_gz} 2> {log.bed_tbi}
+        """
+
+rule split_ch_bed:
+    input:
+        bed_gz = f'{output_directory}/analysis/biscuit_ch_vcf2bed/{{sample}}_ch.bed.gz',
+        bed_tbi = f'{output_directory}/analysis/biscuit_ch_vcf2bed/{{sample}}_ch.bed.gz.tbi',
+    output:
+        bed_gz = f'{output_directory}/analysis/split_ch_bed/{{cx}}/{{sample}}_{{cx}}.bed.gz',
+        bed_tbi = f'{output_directory}/analysis/split_ch_bed/{{cx}}/{{sample}}_{{cx}}.bed.gz.tbi',
+    params:
+    log:
+        bed_gz = f'{output_directory}/logs/split_ch_bed/{{cx}}/{{sample}}_{{cx}}.bed_gz.log',
+        bed_tbi = f'{output_directory}/logs/split_ch_bed/{{cx}}/{{sample}}_{{cx}}.bed_tabix.log',
+    benchmark:
+        f'{output_directory}/benchmarks/split_ch_bed/{{cx}}/{{sample}}_{{cx}}.txt',
+    threads: config['hpc_parameters']['pileup_threads']
+    resources:
+        mem_gb = config['hpc_parameters']['intermediate_memory_gb'],
+        time = config['runtime']['medium'],
+    conda:
+        '../envs/biscuit.yaml'
+    envmodules:
+        config['envmodules']['biscuit'],
+        config['envmodules']['htslib'],
+    shell:
+        """
+        # filter for requested CH methylation type. Rearrange columns so that beta is fourth column and coverage is fifth. Delete columns 3-6 to make it compatible with readBiscuit(merged=FALSE)
+        zcat {input.bed_gz} | perl -F"\\t" -lane 'next unless $F[5] =~ /^{wildcards.cx}$/; die unless scalar(@F)==9; print join("\\t", @F[0,1,2,7,8])' | bgzip -@ {threads} -c 1> {output.bed_gz} 2> {log.bed_gz}
+
+        tabix -p bed {output.bed_gz} 2> {log.bed_tbi}
+        """
+
+def get_bed_for_bigwigs (wildcards):
+    if (wildcards.cx=="mergecg"):
+        return f'{output_directory}/analysis/pileup/{wildcards.sample}_mergecg.bed.gz'
+    if (wildcards.cx in ["CA", "CC", "CT"]):
+        return f'{output_directory}/analysis/split_ch_bed/{wildcards.cx}/{wildcards.sample}_{wildcards.cx}.bed.gz'
+
+rule pileup_bigwigs:
+    input:
+        chrom_sizes=f'{output_directory}/analysis/prep_chromsizes_file/chrom_sizes.tsv',
+        bed_gz = get_bed_for_bigwigs
+    output:
+        bed = temp(f'{output_directory}/analysis/pileup_bigwigs/{{sample}}_{{cx}}.bed'),
+        bigwig=f'{output_directory}/analysis/pileup_bigwigs/{{sample}}_{{cx}}.bw',
+        bed_gz = f'{output_directory}/analysis/pileup_bigwigs/{{sample}}_{{cx}}.bed.gz',
+        bed_tbi = f'{output_directory}/analysis/pileup_bigwigs/{{sample}}_{{cx}}.bed.gz.tbi',
+    params:
+        min_cov=5
+    log:
+        f'{output_directory}/logs/pileup_bigwigs/{{sample}}_{{cx}}.log',
+    benchmark:
+        f'{output_directory}/benchmarks/pileup_bigwigs/{{sample}}_{{cx}}.txt'
+    threads: 1 #config['hpc_parameters']['pileup_threads']
+    resources:
+        mem_gb = config['hpc_parameters']['intermediate_memory_gb'],
+        time = config['runtime']['medium'],
+    conda:
+        '../envs/biscuit.yaml'
+    envmodules:
+        config['envmodules']['ucsc'],
+        config['envmodules']['htslib'],
+    shell:
+        """
+        # make bed for bedGraphToBigWig. Filter for min cov.
+        zcat {input.bed_gz} | perl -F"\\t" -lane 'print $_ if $F[4] >= {params.min_cov}' | cut -f1-4 > {output.bed}
+
+        bedGraphToBigWig {output.bed} {input.chrom_sizes} {output.bigwig}
+
+
+        bgzip -c -@ {threads} {output.bed} > {output.bed_gz}
+        tabix -p bed {output.bed_gz}
+
+        """
+
 rule biscuit_snps:
     input:
         bam = f'{output_directory}/analysis/align/{{sample}}.sorted.markdup.bam',

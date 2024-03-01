@@ -75,6 +75,11 @@ rule all:
             f'{output_directory}/analysis/pileup/{{samples.sample}}_mergecg.bed.gz',
             samples=SAMPLES.itertuples()
         ),
+        #bigwigs
+        expand(
+            f'{output_directory}/analysis/pileup_bigwigs/{{samples.sample}}_{{cx}}.bw',
+            samples=SAMPLES.itertuples(), cx=["mergecg", "CA"]
+        ),
         # biscuit vcf2bed -t snp
         expand(
             f'{output_directory}/analysis/snps/{{samples.sample}}.snp.bed.gz',

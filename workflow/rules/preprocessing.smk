@@ -134,3 +134,26 @@ rule fastq_screen:
         """
         fastq_screen --bisulfite --conf {params.conf} --outdir {params.output_dir} {input} 2> {log.fastq_screen}
         """
+
+
+rule prep_chromsizes_file:
+    input:
+        fai=f'{config["ref"]["fasta"]}.fai'
+    output:
+        f'{output_directory}/analysis/prep_chromsizes_file/chrom_sizes.tsv'
+    log:
+        stdout="logs/prep_chromsizes_file/out.o",
+        stderr="logs/prep_chromsizes_file/err.e",
+    benchmark:
+        "benchmarks/prep_chromsizes_file/bench.txt"
+    params:
+    threads: 1
+    resources:
+        nodes = 1,
+        mem_gb=8,
+        time = config['runtime']['medium'],
+    envmodules:
+    shell:
+        """
+        cut -f 1,2 {input.fai} > {output}
+        """
