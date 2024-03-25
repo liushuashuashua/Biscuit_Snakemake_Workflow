@@ -220,7 +220,6 @@ rule biscuit_ch_vcf2bed:
         bed = temp(f'{output_directory}/analysis/biscuit_ch_vcf2bed/{{sample}}_ch.bed'),
         bed_gz = f'{output_directory}/analysis/biscuit_ch_vcf2bed/{{sample}}_ch.bed.gz',
         bed_tbi = f'{output_directory}/analysis/biscuit_ch_vcf2bed/{{sample}}_ch.bed.gz.tbi',
-    params:
     log:
         vcf2bed = f'{output_directory}/logs/biscuit_ch_vcf2bed/{{sample}}_ch.vcf2bed.log',
         bed_gz = f'{output_directory}/logs/biscuit_ch_vcf2bed/{{sample}}_ch.bed_gz.log',
@@ -250,7 +249,6 @@ rule split_ch_bed:
     output:
         bed_gz = f'{output_directory}/analysis/split_ch_bed/{{cx}}/{{sample}}_{{cx}}.bed.gz',
         bed_tbi = f'{output_directory}/analysis/split_ch_bed/{{cx}}/{{sample}}_{{cx}}.bed.gz.tbi',
-    params:
     log:
         bed_gz = f'{output_directory}/logs/split_ch_bed/{{cx}}/{{sample}}_{{cx}}.bed_gz.log',
         bed_tbi = f'{output_directory}/logs/split_ch_bed/{{cx}}/{{sample}}_{{cx}}.bed_tabix.log',
@@ -267,18 +265,22 @@ rule split_ch_bed:
         config['envmodules']['htslib'],
     shell:
         """
-        # filter for requested CH methylation type. Rearrange columns so that beta is fourth column and coverage is fifth. Delete columns 3-6 to make it compatible with readBiscuit(merged=FALSE)
-        zcat {input.bed_gz} | perl -F"\\t" -lane 'next unless $F[5] =~ /^{wildcards.cx}$/; die unless scalar(@F)==9; print join("\\t", @F[0,1,2,7,8])' | bgzip -@ {threads} -c 1> {output.bed_gz} 2> {log.bed_gz}
+        # Filter for requested CH methylation type.
+        # Rearrange columns so that beta is fourth column and coverage is fifth.
+        # Delete columns 3-6 to make it compatible with readBiscuit(merged=FALSE)
+        zcat {input.bed_gz} | \
+        perl -F"\\t" -lane 'next unless $F[5] =~ /^{wildcards.cx}$/; die unless scalar(@F)==9; print join("\\t", @F[0,1,2,7,8])' | \
+        bgzip -@ {threads} -c 1> {output.bed_gz} 2> {log.bed_gz}
 
         tabix -p bed {output.bed_gz} 2> {log.bed_tbi}
         """
 
-def get_bed_for_bigwigs (wildcards):
-    if (wildcards.cx=="CG"):
+def get_bed_for_bigwigs(wildcards):
+    if wildcards.cx == "CG":
         return f'{output_directory}/analysis/pileup/{wildcards.sample}.bed.gz'
-    if (wildcards.cx=="mergecg"):
+    if wildcards.cx == "mergecg":
         return f'{output_directory}/analysis/pileup/{wildcards.sample}_mergecg.bed.gz'
-    if (wildcards.cx in ["CA", "CC", "CT"]):
+    if wildcards.cx in ["CA", "CC", "CT"]:
         return f'{output_directory}/analysis/split_ch_bed/{wildcards.cx}/{wildcards.sample}_{wildcards.cx}.bed.gz'
 
 rule beta_bigwigs:
@@ -289,7 +291,7 @@ rule beta_bigwigs:
         bed = temp(f'{output_directory}/analysis/beta_bigwigs/{{sample}}_{{cx}}.bed'),
         bigwig=f'{output_directory}/analysis/beta_bigwigs/{{sample}}_{{cx}}.bw',
     params:
-        min_cov=config['make_bigwigs']['min_depth']
+        min_cov = config['make_bigwigs']['min_depth']
     log:
         f'{output_directory}/logs/beta_bigwigs/{{sample}}_{{cx}}.log',
     benchmark:
@@ -305,11 +307,12 @@ rule beta_bigwigs:
         config['envmodules']['htslib'],
     shell:
         """
-        # make bed for bedGraphToBigWig. Filter for min cov.
-        zcat {input.bed_gz} | perl -F"\\t" -lane 'print $_ if $F[4] >= {params.min_cov}' | cut -f1-4 > {output.bed}
+        # Make BED for bedGraphToBigWig. Filter for minimum coverage.
+        zcat {input.bed_gz} | \
+        perl -F"\\t" -lane 'print $_ if $F[4] >= {params.min_cov}' | \
+        cut -f1-4 > {output.bed}
 
         bedGraphToBigWig {output.bed} {input.chrom_sizes} {output.bigwig}
-
         """
 
 rule biscuit_snps:
