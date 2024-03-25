@@ -75,7 +75,7 @@ rule all:
             f'{output_directory}/analysis/pileup/{{samples.sample}}_mergecg.bed.gz',
             samples=SAMPLES.itertuples()
         ),
-        #bigwigs
+        # bigwigs
         expand(
             f'{output_directory}/analysis/beta_bigwigs/{{samples.sample}}_{{cx}}.bw',
             samples=SAMPLES.itertuples(), cx=config['make_bigwigs']['contexts']
