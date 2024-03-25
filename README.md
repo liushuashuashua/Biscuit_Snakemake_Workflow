@@ -28,6 +28,7 @@ needed.
   + [default off] Find average methylation values in bins across genome
   + [default off] Find average methylation values in bins centered on specified regions
   + [default off] QC methylated and unmethylated controls
+  + [default off] Generate bigWigs from BISCUIT BED files
 
 Many options can be easily specified in the `config.yaml`! Otherwise, the commands in the Snakefile can also be modified
 to meet different needs.
