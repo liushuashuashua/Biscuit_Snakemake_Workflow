@@ -1,8 +1,9 @@
 # Ignore analysis/ directory files
-analysis/
+results/
 
 # Ignore assets/ directory files
 assets/
+hg38_assets/
 
 # Ignore merged_reference/ directory files
 merged_reference/
@@ -16,3 +17,8 @@ merged_reference/
 
 # Ignore test directory for devel
 test/
+TEST/
+
+# Ignore raw_data
+raw_data
+

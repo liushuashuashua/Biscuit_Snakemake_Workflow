@@ -32,12 +32,12 @@ runtime:
 # Reference genome
 ref:
     # Absolute path to reference FASTA file
-    fasta: /path/to/your/fasta/file/genome.fa
+    fasta: merged_reference/merged.fa.gz
     # Absolute path to FASTA index, can be the same as "fasta", but might be useful if 2-bit packed reference doesn't
     #     have .fa extension or is named differently
-    index: /path/to/your/biscuit/index/base/that/could/be/the/same/as/fasta/genome.fa
+    index: merged_reference/merged.fa.gz
     # Prebuilt assets and scripts to build custom assets can be found at https://github.com/huishenlab/biscuit/releases/
-    assets: /path/to/your/biscuit_qc/assets
+    assets: assets/hg38
 
 # Directory where raw FASTQs live, can be absolute path or path relative to top directory of pipeline
 fastqs: raw_data
@@ -47,7 +47,7 @@ fastqs: raw_data
 samples: config/samples.tsv
 
 # Directory for writing analysis/ directory to (if '', write to same directory as top directory of pipeline)
-output_directory: ''
+output_directory: 'results'
 #-----------------------------------------------------------------------------------------------------------------------
 
 # Preprocessing Options
@@ -66,10 +66,11 @@ create_assets:
 # Note, when processing data generated with the Adaptase module, it is highly suggested to set args_list: '--clip_R2 15'
 trim_galore:
     # Run trimming (set as True) or not (set as False)
-    trim_before_biscuit: False
+    trim_before_biscuit: True
     # Additonal arguments to pass to trim_galore (note --paired, --fastqc, --cores, and --output_dir are always
     #     included), '' will not include any extra arguments
     args_list: ''
+    args_list_se: ''
 
 # Create a joint reference with ref['fasta'], lambda phage, and pUC19 genomes (lambda phage and pUC19 genomes provided
 #     in bin/)
@@ -91,7 +92,7 @@ fastq_screen:
 biscuit:
     # Additional options to include in biscuit align (number of threads (-@) and read group (-R) already included),
     #     if '' then default values are used for all values except -@ and -R
-    args_align: ''
+    args_align: '-b 1'
     # Additional options to include in biscuit pileup (number of threads (-@) and output name (-o) already included),
     #     if '' then default values are used for all values except -@ and -R
     args_pileup: ''
@@ -102,14 +103,14 @@ biscuit:
     args_mergecg: ''
     # Additional options to include in biscuit vcf2bed for SNP extraction (-t snp specified to ensure SNPs are
     #     extracted), if '' then default values are used for all other values
-    args_vcf2bed_snp: ''
+    args_vcf2bed_snp: '-k 1'
     # Additional options to include in biscuit epiread (number of threads (-@) and SNP file (-B) already included),
     #     if '' then default values are used for all values except -@ and -B
     args_epiread: ''
     # Call SNPs with BISCUIT (True) or not (False)
-    extract_snps: False
+    extract_snps: True
     # Create SNP BEDs and epiBED files (True) or not (False)
-    make_epibeds: False
+    make_epibeds: True
 
 # Inputs to SAM read group in biscuit align
 sam_header:
@@ -130,7 +131,7 @@ sam_header:
 #     config["build_ref_with_methylation_controls"].
 # If True - calculate methylation and create plot
 # If False - skip this step
-control_vectors: False
+control_vectors: True
 
 # Run preseq on data
 preseq:
@@ -142,33 +143,33 @@ preseq:
 # Calculate the ratio observed/expected coverage based on bismap results for different genomic features
 obs_exp:
     # Create obs/exp plots if True, skip if False
-    run: False
+    run: True
     # Directory where asset files live (set create_assets['run'] to True if you don't have these files already)
     assets: assets/hg38
 
 # Find some CpG statistics not found elsewhere (% covered, CpG island coverage)
 cpg_stats:
     # Create CpG stats plots if True, skip if False
-    run: False
+    run: True
     # Directory where asset files live (set create_assets['run'] to True if you don't have these files already)
     assets: assets/hg38
 
 # Determine uniformity of coverage across genome
 covg_uniformity:
     # Create uniformity plots if True, skip if False
-    run: False
+    run: True
     # Directory where asset files live (set create_assets['run'] to True if you don't have these files already)
     assets: assets/hg38
 
 # Create plot of the percent of the genome covered by each sample
 percent_covered:
     # Create percent covered plot if True, skip if False
-    run: False
+    run: True
 
 # Create binned average methylation values using bin/find_binned_averages.sh
 binned_averages:
     # Calculate binned averages if True, skip if False
-    run: False
+    run: True
     # Minimum coverage at CG loci to be considered for average calculation
     cov_filter: 1
     # Bin sizes to find averages for
@@ -188,9 +189,9 @@ region_centered_bin_averages:
 # Create bigWigs for genome browser viewing
 make_bigwigs:
     # Make Bigwig files from BED file output of biscuit vcf2bed
-    run: False
+    run: True
     # Pileups have a min of 3 by default, so values <= 3 have no effect
-    min_depth: 3
+    min_depth: 1
     # Valid options are "CA", "CC", "CT", "CG", "mergecg". Case-sensitive
     contexts: ['mergecg']
 #-----------------------------------------------------------------------------------------------------------------------
@@ -207,7 +208,7 @@ envmodules:
     R: bbc2/R/R-4.3.0
     snakemake: bbc2/snakemake/snakemake-7.25.0
     trim_galore: bbc2/trim_galore/trim_galore-0.6.10
-    biscuit: bbc2/biscuit/biscuit_1_2_0
+    biscuit: bbc2/biscuit/biscuit_1_5_0
     dupsifter: bbc2/dupsifter/dupsifter_1_2_0
     preseq: bbc2/preseq/preseq-3.2.0
     htslib: bbc2/htslib/htslib-1.17
