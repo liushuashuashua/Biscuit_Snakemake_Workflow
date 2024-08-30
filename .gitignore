@@ -22,3 +22,4 @@ TEST/
 # Ignore raw_data
 raw_data
 
+nohup.out

@@ -103,7 +103,7 @@ biscuit:
     args_mergecg: ''
     # Additional options to include in biscuit vcf2bed for SNP extraction (-t snp specified to ensure SNPs are
     #     extracted), if '' then default values are used for all other values
-    args_vcf2bed_snp: '-k 1'
+    args_vcf2bed_snp: '-k 3 -c -e'
     # Additional options to include in biscuit epiread (number of threads (-@) and SNP file (-B) already included),
     #     if '' then default values are used for all values except -@ and -B
     args_epiread: ''

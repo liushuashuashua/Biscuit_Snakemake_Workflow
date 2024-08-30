@@ -21,6 +21,11 @@ rename_fastqs <- function(samplesheet, fastq_dir, out_dir) {
         }
         
         # Rename R2 reads
+        if (is.na(subset(sheet, sample == samp)$fq2) | subset(sheet, sample == samp)$fq2 == "") {
+            print(paste("No R2 reads found for", samp))
+            next
+        }
+        
         file_2 <- paste0(fastq_dir, "/", unlist(strsplit(subset(sheet, sample == samp)$fq2, split = ",")))
         print(paste("Found", length(file_2), "R2 files for", samp))
         

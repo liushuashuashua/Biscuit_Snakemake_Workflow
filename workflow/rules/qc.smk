@@ -129,7 +129,8 @@ def get_multiQC_params(wildcards):
 rule multiQC:
     input:
         # raw fastqc
-        expand(f'{output_directory}/analysis/raw_fastqc/{{samples.sample}}-1-R{{read}}_fastqc.zip', read=[1,2], samples=SAMPLES.itertuples()),
+        get_qc_file(),
+        #expand(f'{output_directory}/analysis/raw_fastqc/{{samples.sample}}-1-R{{read}}_fastqc.zip', read=[1,2], samples=SAMPLES.itertuples()),
         # flagstat
         expand(f'{output_directory}/analysis/align/{{samples.sample}}.sorted.markdup.bam.flagstat', samples=SAMPLES.itertuples()),
         # biscuit_qc
@@ -149,7 +150,10 @@ rule multiQC:
         # fastq_screen
         expand(f'{output_directory}/analysis/fastq_screen/{{samples.sample}}-1-R{{read}}_screen.txt', read=[1,2], samples=SAMPLES.itertuples()) if config['fastq_screen']['run'] else [],
         # trim_galore
-        expand(f'{output_directory}/analysis/trim_reads/{{samples.sample}}-R{{read}}_val_{{read}}_merged.fq.gz', read=[1,2], samples=SAMPLES.itertuples()) if config['trim_galore']['trim_before_biscuit'] else [],
+        get_trim_file() if config['trim_galore']['trim_before_biscuit'] else [],
+        #expand(f'{output_directory}/analysis/trim_reads/{{samples.sample}}_val_1_merged.fq.gz', samples=SAMPLES.itertuples()) if config['trim_galore']['trim_before_biscuit'] else [],
+        #expand(f'{output_directory}/analysis/trim_reads/{{samples.sample}}-R{{read}}_val_{{read}}_merged.fq.gz', read=[1,2], samples=SAMPLES.itertuples()) if config['trim_galore']['trim_before_biscuit'] else [],
+
         # preseq
         expand(f'{output_directory}/analysis/preseq/{{samples.sample}}.ccurve.txt', samples=SAMPLES.itertuples()) if config['preseq']['run'] else [],
     output:
