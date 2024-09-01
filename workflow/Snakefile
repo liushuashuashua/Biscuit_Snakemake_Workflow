@@ -11,7 +11,10 @@ min_version('7.0')
 configfile:
     'config/config.yaml'
 
-SAMPLES = pd.read_table(config['samples'], dtype=str, comment='#').set_index(['sample'], drop=False)
+SAMPLES = pd.read_table(config['samples'],dtype={'SampleID':str,'Analysis':int,'FqR1':str,'FqR2':str}, comment='#', header=0).set_index(['SampleID'], drop=False)
+SAMPLES = SAMPLES[SAMPLES['Analysis'] == 1]
+
+SAMPLES.rename(columns={'SampleID': 'sample', 'FqR1': 'fq1', 'FqR2': 'fq2'}, inplace=True)
 SAMPLES['pe_or_se'] = SAMPLES['fq2'].apply(lambda x: 'pe' if not pd.isnull(x) else'se')
 print('SAMPLES:\n', SAMPLES)
 
@@ -22,7 +25,7 @@ wildcard_constraints:
 
 def is_single_end(sample):
     """Return True if sample-unit is single end."""
-    return pd.isnull(SAMPLES.loc[sample, "fq2"])
+    return pd.isna(SAMPLES.loc[sample, "fq2"])
 
 
 def set_output_directory():
@@ -49,7 +52,7 @@ def get_qc_file():
     for samples in SAMPLES.itertuples():
         if not is_single_end(samples.sample):
             # paired-end sample
-            output_array.extend([f'{output_directory}/analysis/raw_fastqc/{samples.sample}-1-R{read}_fastqc.{ext}' for read in [1,2] for ext in ['html','zip']])
+            output_array.extend([f'{output_directory}/analysis/raw_fastqc/{samples.sample}_R{read}_fastqc.{ext}' for read in [1,2] for ext in ['html','zip']])
         else:
             # single-end sample
             output_array.extend([f'{output_directory}/analysis/raw_fastqc/{samples.sample}_fastqc.{ext}' for ext in ['html','zip']])
@@ -61,10 +64,10 @@ def get_trim_file():
     for samples in SAMPLES.itertuples():
         if not is_single_end(samples.sample):
             # paired-end sample
-            output_array.extend([f'{output_directory}/analysis/trim_reads/{samples.sample}-R{read}_val_{read}_merged.fq.gz' for read in [1,2]])
+            output_array.extend([f'{output_directory}/analysis/trim_reads/{samples.sample}_val_{read}.fq.gz' for read in [1,2]])
         else:
             # single-end sample
-            output_array.append(f'{output_directory}/analysis/trim_reads/{samples.sample}_merged.fq.gz')
+            output_array.append(f'{output_directory}/analysis/trim_reads/{samples.sample}_trimmed.fq.gz')
     print('OUTPUT TRIM ARRAY:\n', output_array)
     return output_array
 
@@ -81,12 +84,12 @@ rule all:
 
         # Rename FASTQs and run FastQC run over them
 #        expand(
-#            f'{output_directory}/analysis/raw_fastqc/{{samples.sample}}-1-R{{read}}_fastqc.{{ext}}',
+#            f'{output_directory}/analysis/raw_fastqc/{{samples.sample}}_R{{read}}_fastqc.{{ext}}',
 #            ext=['html','zip'], read=[1,2], samples=SAMPLES.itertuples()
 #        ),
         # fastq_screen
         expand(
-            f'{output_directory}/analysis/fastq_screen/{{samples.sample}}-1-R{{read}}_screen.html',
+            f'{output_directory}/analysis/fastq_screen/{{samples.sample}}_R{{read}}_screen.html',
             read=[1,2], samples=SAMPLES.itertuples()
         ) if config['fastq_screen']['run'] else [],
 

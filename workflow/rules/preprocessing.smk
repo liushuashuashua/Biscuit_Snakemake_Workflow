@@ -11,7 +11,6 @@ checkpoint rename_fastq_files:
         symlink_dir = directory(f'{output_directory}/analysis/renamed_fastqs'),
     params:
         samplesheet = config['samples'],
-        fastq_dir = config['fastqs'],
     log:
         f'{output_directory}/logs/rename/rename.log',
     threads: 1,
@@ -19,34 +18,27 @@ checkpoint rename_fastq_files:
         mem_gb = config['hpc_parameters']['small_memory_gb'],
         time = config['runtime']['short'],
     conda:
-        '../envs/r.yaml'
-    envmodules:
-        config['envmodules']['R'],
+        '../envs/python_packages.yaml'
     script:
-        '../scripts/rename.R'
-
-
+        '../scripts/rename.py'
+  
 def get_renamed_fastq_files(wildcards):
-    cp_output = checkpoints.rename_fastq_files.get().output.symlink_dir
-
-    # R1 and R2 will have the same id values
-    IDX, = glob_wildcards(cp_output + '/' + wildcards.sample + '-{id}-R1.fastq.gz')
-    if not is_single_end(**wildcards):
-        files = list(
-            expand(cp_output + '/' + wildcards.sample + '-{idx}-R{read}.fastq.gz', idx = IDX, read = [1, 2])
-        )
+    sample = wildcards.sample
+    print(f'Getting renamed fastq files for {sample}')
+    checkpoint_sample = checkpoints.rename_fastq_files.get(sample=wildcards.sample)
+    if os.path.exists(f'{checkpoint_sample.output.symlink_dir}/{sample}_R1.fastq.gz') and os.path.exists(f'{checkpoint_sample.output.symlink_dir}/{sample}_R2.fastq.gz'):
+        return [f'{checkpoint_sample.output.symlink_dir}/{sample}_R1.fastq.gz', f'{checkpoint_sample.output.symlink_dir}/{sample}_R2.fastq.gz']
     else:
-        files = list(expand(cp_output + '/' + wildcards.sample + '-{idx}-R1.fastq.gz', idx = IDX))
-    return files
+        return [f'{checkpoint_sample.output.symlink_dir}/{sample}.fastq.gz']
 
-rule raw_fastqc:
+rule raw_fastqc_pe:
     input:
         get_renamed_fastq_files
     output:
-        f'{output_directory}/analysis/raw_fastqc/{{sample}}-1-R1_fastqc.html',
-        f'{output_directory}/analysis/raw_fastqc/{{sample}}-1-R1_fastqc.zip',
-        f'{output_directory}/analysis/raw_fastqc/{{sample}}-1-R2_fastqc.html',
-        f'{output_directory}/analysis/raw_fastqc/{{sample}}-1-R2_fastqc.zip',
+        f'{output_directory}/analysis/raw_fastqc/{{sample}}_R1_fastqc.html',
+        f'{output_directory}/analysis/raw_fastqc/{{sample}}_R1_fastqc.zip',
+        f'{output_directory}/analysis/raw_fastqc/{{sample}}_R2_fastqc.html',
+        f'{output_directory}/analysis/raw_fastqc/{{sample}}_R2_fastqc.zip',
     params:
         dir = f'{output_directory}/analysis/raw_fastqc',
     log:
@@ -64,7 +56,7 @@ rule raw_fastqc:
         time = config['runtime']['medium'],
     shell:
         """
-        mkdir -p {params.dir}
+        if [[ -d {params.dir} ]]; then echo "raw_fastqc already exists"; else mkdir -p {params.dir}; fi
         fastqc --outdir {params.dir} --threads {threads} {input} 2> {log.stderr} 1> {log.stdout}
         """
 
@@ -91,16 +83,16 @@ rule raw_fastqc_se:
         time = config['runtime']['medium'],
     shell:
         """
-        mkdir -p {params.dir}
+        if [[ -d {params.dir} ]]; then echo "raw_fastqc already exists"; else mkdir -p {params.dir}; fi
         fastqc --outdir {params.dir} --threads {threads} {input} 2> {log.stderr} 1> {log.stdout}
         """
 
-rule trim_reads:
+rule trim_reads_pe:
     input:
         get_renamed_fastq_files
     output:
-        f'{output_directory}/analysis/trim_reads/{{sample}}-R1_val_1_merged.fq.gz',
-        f'{output_directory}/analysis/trim_reads/{{sample}}-R2_val_2_merged.fq.gz',
+        f'{output_directory}/analysis/trim_reads/{{sample}}_val_1.fq.gz',
+        f'{output_directory}/analysis/trim_reads/{{sample}}_val_2.fq.gz',
     params:
         outdir = f'{output_directory}/analysis/trim_reads',
         args_list = config['trim_galore']['args_list'],
@@ -124,23 +116,20 @@ rule trim_reads:
             --paired \
             {input} \
             --output_dir {params.outdir} \
+            --basename {wildcards.sample} \
             --cores {threads} \
             --fastqc \
+            --gzip \
             {params.args_list} \
             2> {log.stderr} 1> {log.stdout}
 
-        # Create merged R1 and R2 FASTQs, clean up files that were merged
-        cat {params.outdir}/{wildcards.sample}-*-R1_val_1.fq.gz > {params.outdir}/{wildcards.sample}-R1_val_1_merged.fq.gz
-        cat {params.outdir}/{wildcards.sample}-*-R2_val_2.fq.gz > {params.outdir}/{wildcards.sample}-R2_val_2_merged.fq.gz
-        rm {params.outdir}/{wildcards.sample}-*-R1_val_1.fq.gz
-        rm {params.outdir}/{wildcards.sample}-*-R2_val_2.fq.gz
-        """
+       """
 
 rule trim_reads_se:
     input:
         get_renamed_fastq_files
     output:
-        f'{output_directory}/analysis/trim_reads/{{sample}}_merged.fq.gz',
+        f'{output_directory}/analysis/trim_reads/{{sample}}_trimmed.fq.gz',
     params:
         outdir = f'{output_directory}/analysis/trim_reads',
         args_list = config['trim_galore']['args_list_se'],
@@ -163,14 +152,13 @@ rule trim_reads_se:
         trim_galore \
             {input} \
             --output_dir {params.outdir} \
+            --basename {wildcards.sample} \
             --cores {threads} \
             --fastqc \
+            --gzip \
             {params.args_list} \
             2> {log.stderr} 1> {log.stdout}
 
-        # Create merged R1 and R2 FASTQs, clean up files that were merged
-        cat {params.outdir}/{wildcards.sample}-*_trimmed.fq.gz > {params.outdir}/{wildcards.sample}_merged.fq.gz
-        rm {params.outdir}/{wildcards.sample}-*_trimmed.fq.gz
         """
 
 
@@ -178,10 +166,10 @@ rule fastq_screen:
     input:
         get_renamed_fastq_files
     output:
-        f'{output_directory}/analysis/fastq_screen/{{sample}}-1-R1_screen.html',
-        f'{output_directory}/analysis/fastq_screen/{{sample}}-1-R2_screen.html',
-        f'{output_directory}/analysis/fastq_screen/{{sample}}-1-R1_screen.txt',
-        f'{output_directory}/analysis/fastq_screen/{{sample}}-1-R2_screen.txt',
+        f'{output_directory}/analysis/fastq_screen/{{sample}}_R1_screen.html',
+        f'{output_directory}/analysis/fastq_screen/{{sample}}_R2_screen.html',
+        f'{output_directory}/analysis/fastq_screen/{{sample}}_R1_screen.txt',
+        f'{output_directory}/analysis/fastq_screen/{{sample}}_R2_screen.txt',
     params:
         conf = config['fastq_screen']['conf'],
         output_dir = f'{output_directory}/analysis/fastq_screen/',
@@ -208,8 +196,8 @@ rule fastq_screen_se:
     input:
         get_renamed_fastq_files
     output:
-        f'{output_directory}/analysis/fastq_screen/{{sample}}-1-R1_screen.html',
-        f'{output_directory}/analysis/fastq_screen/{{sample}}-1-R1_screen.txt',
+        f'{output_directory}/analysis/fastq_screen/{{sample}}_screen.html',
+        f'{output_directory}/analysis/fastq_screen/{{sample}}_screen.txt',
     params:
         conf = config['fastq_screen']['conf'],
         output_dir = f'{output_directory}/analysis/fastq_screen/',

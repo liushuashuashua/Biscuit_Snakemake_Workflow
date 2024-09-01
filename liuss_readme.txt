@@ -1,5 +1,5 @@
 # workflow/scripts/rename.R
 #      
-# QC.sh
-# change 
+# change QC.sh wait commond
+
 

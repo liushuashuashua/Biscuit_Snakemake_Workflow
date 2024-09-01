@@ -4,6 +4,7 @@ results/
 # Ignore assets/ directory files
 assets/
 hg38_assets/
+assets_hg38/
 
 # Ignore merged_reference/ directory files
 merged_reference/

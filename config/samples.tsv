@@ -1,2 +1,3 @@
-sample	fq1	fq2
-V7323-SE75-10M	V7323-SE75-10M.fq.gz	
+Analysis	FamilyID	SampleID	FqR1	FqR2	Bam
+1	TEST	V7323-SE75-10M-SE	/data_bak/liushasha_work/20240708-yanfa-hg38/SE75bp_NW/Fq/V7323-SE75-10M.fq.gz		
+1	TEST	V7323-SE75-10M-PE	/data_bak/project/WGBS/20240826/fastp_trim10/26_L6_Q0103W8734-10M.R1.fq.gz	/data_bak/project/WGBS/20240826/fastp_trim10/26_L6_Q0103W8734-10M.R2.fq.gz	

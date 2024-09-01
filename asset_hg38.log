@@ -1,0 +1,8 @@
+nohup: 忽略输入
+Creating output directory assets_hg38/
+Loading the reference genome
+Reference genome loaded, finding all CpGs
+Sliding window analysis GC-content
+Command line functions to sort and subset files
+
+Finished /home/liushasha/miniconda3/envs/ld-pgta/bin/build_biscuit_QC_assets.pl

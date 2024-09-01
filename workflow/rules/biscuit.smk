@@ -86,28 +86,29 @@ def get_rename_fastq_output(wildcards):
 
     if config['trim_galore']['trim_before_biscuit']:
         if not is_single_end(wildcards.sample):
-            tmp1 = output_directory + '/analysis/trim_reads/' + wildcards.sample + '-R1_val_1_merged.fq.gz'
-            tmp2 = output_directory + '/analysis/trim_reads/' + wildcards.sample + '-R2_val_2_merged.fq.gz'
+            tmp1 = output_directory + '/analysis/trim_reads/' + wildcards.sample + '_val_1.fq.gz'
+            tmp2 = output_directory + '/analysis/trim_reads/' + wildcards.sample + '_val_2.fq.gz'
             files_array.extend([tmp1, tmp2])
         else:
-            tmp = output_directory + '/analysis/trim_reads/' + wildcards.sample + '_merged.fq.gz'
+            tmp = output_directory + '/analysis/trim_reads/' + wildcards.sample + '_trimmed.fq.gz'
             files_array.append(tmp)
     else:
-        IDX, = glob_wildcards(cp_output + '/' + wildcards.sample + '-{id}-R1.fastq.gz')
-        files = list(expand(cp_output + '/' + wildcards.sample + '-{idx}-R1.fastq.gz', idx = IDX))
-        files.sort()
-        if length(files) == 1:
-            files_array.append(files[0])
-        else:
-            files_array.extend(files)
-        if not is_single_end(wildcards.sample):
-            IDX, = glob_wildcards(cp_output + '/' + wildcards.sample + '-{id}-R2.fastq.gz')
-            files = list(expand(cp_output + '/' + wildcards.sample + '-{idx}-R2.fastq.gz', idx = IDX))
-            files.sort()
-            if length(files) == 1:
-                files_array.append(files[0])
-            else:
-                files_array.extend(files)
+        files_array = get_renamed_fastq_files(wildcards)
+        #IDX, = glob_wildcards(cp_output + '/' + wildcards.sample + '-{id}-R1.fastq.gz')
+        #files = list(expand(cp_output + '/' + wildcards.sample + '-{idx}-R1.fastq.gz', idx = IDX))
+        #files.sort()
+        #if length(files) == 1:
+        #    files_array.append(files[0])
+        #else:
+        #    files_array.extend(files)
+        #if not is_single_end(wildcards.sample):
+        #    IDX, = glob_wildcards(cp_output + '/' + wildcards.sample + '-{id}-R2.fastq.gz')
+        #    files = list(expand(cp_output + '/' + wildcards.sample + '-{idx}-R2.fastq.gz', idx = IDX))
+        #    files.sort()
+        #    if length(files) == 1:
+        #        files_array.append(files[0])
+        #    else:
+        #        files_array.extend(files)
     return files_array 
         
 
@@ -124,6 +125,7 @@ rule biscuit_sifter:
         dup = f'{output_directory}/analysis/align/{{sample}}.dupsifter.stat',
     params:
         args_list = config['biscuit']['args_align'],
+        se_params = lambda wildcards: '--single-end ' if is_single_end(wildcards.sample) else '',
         LB = config['sam_header']['LB'],
         PL = config['sam_header']['PL'],
         PU = config['sam_header']['PU'],
@@ -157,7 +159,7 @@ rule biscuit_sifter:
             -R '@RG\tLB:{params.LB}\tID:{params.SM}\tPL:{params.PL}\tPU:{params.PU}\tSM:{params.SM}' \
             {input.index} \
             {input.R1} 1>{output.tmp} 2> {log.biscuit}
-        dupsifter -s --stats-output {output.dup} {input.reference} {output.tmp} 1>{output.tmp_dedup} 2> {log.dupsifter} 
+        dupsifter {params.se_params} --stats-output {output.dup} {input.reference} {output.tmp} 1>{output.tmp_dedup} 2> {log.dupsifter} 
         samtools sort -@ {params.st_threads} -m 5G -o {output.bam} -O BAM {output.tmp_dedup} 2> {log.samtools_sort}
 
         samtools index -@ {params.st_threads} {output.bam} 2> {log.samtools_index}
